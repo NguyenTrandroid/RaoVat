@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/custom_background"
+    tools:context=".login.LoginActivity">
+    <RelativeLayout
+        android:id="@+id/rl_splash_screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/custom_background">
+
+        <ImageView
+            android:visibility="invisible"
+            android:id="@+id/iv_splash_screen"
+            android:layout_width="@dimen/dp300"
+            android:layout_height="@dimen/dp100"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dp120"
+            android:src="@drawable/raovat" />
+        <com.wang.avi.AVLoadingIndicatorView xmlns:app="http://schemas.android.com/apk/res-auto"
+            style="@style/AVLoadingIndicatorView"
+            android:id="@+id/av_Loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp30"
+            android:visibility="visible"
+            app:indicatorColor="@color/black"
+            app:indicatorName="BallPulseIndicator" />
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:visibility="invisible"
+        android:id="@+id/rl_mainlg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="@dimen/dp300"
+            android:layout_height="@dimen/dp100"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dp120"
+            android:src="@drawable/raovat" />
+
+
+        <EditText
+            android:maxLength="10"
+            android:id="@+id/edt_user"
+            android:layout_width="@dimen/dp250"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_logo"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dp40"
+            android:backgroundTint="@color/black"
+            android:drawableStart="@drawable/ic_user_silhouette"
+            android:drawableLeft="@drawable/ic_user_silhouette"
+            android:drawablePadding="@dimen/dp10"
+            android:hint="Số điện thoại"
+            android:inputType="numberSigned|number"
+            android:textCursorDrawable="@null"
+            tools:maxLength="10" />
+
+        <EditText
+            android:id="@+id/edt_pass"
+            android:layout_width="@dimen/dp250"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edt_user"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/dp15"
+            android:backgroundTint="@color/black"
+            android:drawableStart="@drawable/ic_lock"
+            android:drawableLeft="@drawable/ic_lock"
+            android:drawablePadding="@dimen/dp10"
+            android:hint="Mật khẩu"
+            android:inputType="textPassword"
+            android:textCursorDrawable="@null" />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:visibility="gone"
+            android:id="@+id/cb_tk"
+            android:layout_marginTop="@dimen/dp15"
+            android:layout_marginLeft="@dimen/dp55"
+            android:layout_below="@id/edt_pass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:visibility="gone"
+            android:layout_marginLeft="@dimen/dp5"
+            android:textSize="@dimen/sp15"
+            android:layout_marginTop="@dimen/dp20"
+            android:layout_below="@id/edt_pass"
+            android:text="Nhớ tài khoản này"
+            android:layout_toRightOf="@id/cb_tk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_login"
+            app:cardElevation="@dimen/dp5"
+            android:layout_marginTop="@dimen/dp25"
+            app:cardCornerRadius="@dimen/dp20"
+            app:cardBackgroundColor="@color/yellow1"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/cb_tk"
+            android:layout_width="@dimen/dp250"
+            android:layout_height="@dimen/dp40">
+            <TextView
+                android:textStyle="bold"
+                android:textSize="@dimen/sp15"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:text="Đăng nhập"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_signup"
+            app:cardElevation="@dimen/dp5"
+            android:layout_marginTop="@dimen/dp15"
+            app:cardCornerRadius="@dimen/dp20"
+            app:cardBackgroundColor="@color/yellow1"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/cv_login"
+            android:layout_width="@dimen/dp250"
+            android:layout_height="@dimen/dp40">
+            <TextView
+                android:textStyle="bold"
+                android:textSize="@dimen/sp15"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:text="Đăng kí"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+
+
+
+
+
+
+</RelativeLayout>

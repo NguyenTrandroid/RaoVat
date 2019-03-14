@@ -1,0 +1,7 @@
+package com.example.raovat.addphoto;
+
+import java.util.ArrayList;
+
+public interface OnPhotoListSelect {
+    void sendPhotolist(ArrayList<String> list, boolean closeFragment);
+}

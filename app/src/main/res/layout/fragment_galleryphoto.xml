@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true">
+
+    <RelativeLayout
+        android:id="@+id/rl_rela_top"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:background="@color/yellow">
+
+        <RelativeLayout
+            android:id="@+id/rl_back"
+            android:layout_width="@dimen/dp50"
+            android:layout_height="@dimen/dp50"
+            android:layout_centerVertical="true"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/dp24"
+                android:layout_height="@dimen/dp24"
+                android:src="@drawable/ic_arrow_left" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <TextView
+                android:id="@+id/tv_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Gallery"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp20" />
+
+            <ImageView
+                android:id="@+id/img_gallery"
+                android:layout_width="@dimen/dp10"
+                android:layout_height="@dimen/dp10"
+                android:layout_marginLeft="@dimen/dp5"
+                android:layout_marginTop="@dimen/dp10"
+                android:layout_toRightOf="@id/tv_gallery"
+                android:src="@drawable/ic_arrow_down_1" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp25"
+            android:text="ĐỒNG Ý"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp17"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_galleryphoto"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_rela_top"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/dp10"
+        android:clickable="true" />
+
+</RelativeLayout>

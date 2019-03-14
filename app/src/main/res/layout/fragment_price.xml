@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true">
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:background="@color/yellow">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp10"
+            android:src="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Giá bán / SDT liện hệ"
+            android:textColor="#000"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_gia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_title"
+        android:layout_marginTop="@dimen/dp10">
+
+        <TextView
+            android:id="@+id/txt_gia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dp10"
+            android:text="Giá"
+            android:textSize="@dimen/sp15" />
+
+        <EditText
+            android:id="@+id/edt_money"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_gia"
+            android:layout_marginLeft="@dimen/dp5"
+            android:hint="Nhập giá bạn sẵn sàng bán bằng VNĐ"
+            android:inputType="numberDecimal"
+            android:textColor="@android:color/black" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+
+        android:id="@+id/rl_sdt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rl_gia"
+        android:layout_marginTop="@dimen/dp20">
+
+        <TextView
+            android:id="@+id/txt_sdt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dp10"
+            android:text="Số điện thoại"
+            android:textSize="@dimen/sp15" />
+
+        <EditText
+            android:maxLength="10"
+            android:id="@+id/edt_sdt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_sdt"
+            android:layout_marginLeft="@dimen/dp5"
+            android:hint="Nhập số điện thoại liên hệ"
+            android:inputType="numberDecimal"
+            android:textColor="@android:color/black" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+
+        android:id="@+id/rl_next"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:layout_alignParentBottom="true"
+        android:background="@color/yellow">
+
+        <TextView
+            android:id="@+id/tv_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Tiếp tục"
+            android:textColor="#000"
+            android:textSize="@dimen/sp20" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true">
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:background="@color/yellow">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp10"
+            android:src="@drawable/ic_arrow_left" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Mô tả chi tiết"
+            android:textColor="#000"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <EditText
+        android:layout_below="@id/rl_title"
+        android:id="@+id/ed_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp30"
+        android:layout_marginRight="@dimen/dp10"
+        android:hint="Địa chỉ" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp270"
+        android:layout_below="@id/ed_title"
+        android:layout_marginLeft="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp30"
+        android:layout_marginRight="@dimen/dp10"
+        android:background="#CDE9F0">
+
+        <TextView
+            android:id="@+id/tv_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dp10"
+            android:text="Thêm địa chỉ của bạn"
+            android:textColor="#15649B"
+            android:textSize="@dimen/sp17"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginTop="@dimen/dp70"
+            android:text="Ví dụ:"
+            android:textColor="#15649B"
+            android:textSize="@dimen/sp17"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginTop="@dimen/dp100"
+            android:text="70D Đường 185, Khu phố 5, Phường Phước Long B, Q9, Tp.HCM Quận 9"
+            android:textColor="#15649B"
+            android:textSize="@dimen/sp15" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginTop="@dimen/dp160"
+            android:text="Lưu ý"
+            android:textColor="#15649B"
+            android:textSize="@dimen/sp17"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginTop="@dimen/dp190"
+            android:text="- Không cần ghi Tỉnh/Thành Phố"
+            android:textColor="#15649B"
+            android:textSize="@dimen/sp15" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginTop="@dimen/dp220"
+            android:text="- Không chèn số điện thoại và giá"
+            android:textColor="#15649B"
+            android:textSize="@dimen/sp15" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_next"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp50"
+        android:layout_alignParentBottom="true"
+        android:background="@color/yellow">
+
+        <TextView
+            android:id="@+id/tv_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Tiếp tục"
+            android:textColor="#000"
+            android:textSize="@dimen/sp20" />
+    </RelativeLayout>
+
+</RelativeLayout>
