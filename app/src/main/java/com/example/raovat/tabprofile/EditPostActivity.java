@@ -1,8 +1,14 @@
-package com.example.raovat.sell;
+package com.example.raovat.tabprofile;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,7 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.raovat.Models.Categorychild1;
+import com.example.raovat.Models.Categoryparen;
 import com.example.raovat.Models.InfoCategoryparen;
+import com.example.raovat.Models.Post;
 import com.example.raovat.Models.PostNew;
 import com.example.raovat.R;
 import com.example.raovat.Utils.SLoading;
@@ -22,12 +31,17 @@ import com.example.raovat.image_picker_module.furntion.ImageFileLoader;
 import com.example.raovat.image_picker_module.furntion.ImageLoaderListener;
 import com.example.raovat.image_picker_module.model.Folder;
 import com.example.raovat.image_picker_module.model.Image;
+import com.example.raovat.sell.OnSendData;
+import com.example.raovat.sell.SendIdPost;
 import com.example.raovat.sell.adapter.ImageSellAdapter;
 import com.example.raovat.sell.fragment.FragmentB1;
 import com.example.raovat.sell.fragment.FragmentB3;
 import com.example.raovat.sell.fragment.FragmentB4;
 import com.example.raovat.sell.fragment.FragmentB5;
 import com.example.raovat.sell.fragment.FragmentB6;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import java.io.File;
@@ -35,10 +49,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.content.CursorLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -52,16 +68,24 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 
-public class SellActivity extends AppCompatActivity implements OnPhotoListSelect, OnSendData, SendIdPost {
+public class EditPostActivity extends AppCompatActivity implements OnPhotoListSelect, OnSendData, SendIdPost, SendIDCategoryparent {
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     ImageFileLoader imageFileLoader;
     ArrayList<File> excludedImages;
+    ImageSellAdapter imageSellAdapter;
     ArrayList<String> listImg;
+
     FragmentB6 fragmentB6;
-    FragmentB5 fragmentB5;
     FragmentB4 fragmentB4;
+    Fragment fragmentB5;
     String address = "";
+    Post post;
+    String nameCategoryChild = "";
+    String nameCategoryparent = "";
+    String iDCategoryparent = "";
+    Uri uri;
+
     SLoading sLoading;
     final APIService service = APIClient.getClient();
 
@@ -69,6 +93,7 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     String CategoryChildId = "";
     String AreaId = "";
     SendIdPost sendIdPost;
+    SendIDCategoryparent sendIDCategoryparent;
 
     ArrayList<InfoCategoryparen> categoryParentName;
     FragmentGalleryPhotoList fragmentGalleryPhotoList;
@@ -120,6 +145,8 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     RelativeLayout rlOk;
     @BindView(R.id.iv_back)
     ImageView ivBack;
+    @BindView(R.id.iv_camera)
+    ImageView ivCamera;
     @BindView(R.id.tv_title1)
     TextView tvTitle1;
     @BindView(R.id.tv_title2)
@@ -137,12 +164,10 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sell);
+        setContentView(R.layout.activity_edit_post);
         ButterKnife.bind(this);
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.rl_sellMain, new FragmentB1()).addToBackStack("B1");
-        fragmentTransaction.commit();
         init();
         initAction();
 
@@ -155,6 +180,20 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        ivCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.TITLE, "New Picture");
+                values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+                uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                Log.d("AAA", uri.getPath());
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, 123);
             }
         });
         ivAddimg.setOnClickListener(new View.OnClickListener() {
@@ -171,10 +210,17 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
         rlOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (tvTitle.getText().toString().equals("") || tvPrice.getText().toString().equals("")
+                        || tvAddress.getText().toString().equals("") || tvSdt.getText().toString().equals("")
+                        || tvCategoryChilds.getText().toString().equals("")) {
+                    Toast.makeText(EditPostActivity.this, "Thông tin không được trống!", Toast.LENGTH_SHORT).show();
+                } else {
+                    updatePost();
+                }
 
-                createPost(tvTitle.getText().toString(), tvPrice.getText().toString(), tvAddress.getText().toString(), tvSdt.getText().toString(),
-                        tvDescription.getText().toString(), sharedPreferences.getString("IdUser", ""),
-                        AreaId, CategoryChildId);
+
+                Log.d("AAA", tvTitle.getText().toString() + " " + tvPrice.getText().toString() + " " + tvAddress.getText().toString() + " " + tvSdt.getText().toString() + " " + tvDescription.getText().toString() + " " + post.getUserId() + " " +
+                        AreaId + " " + CategoryChildId + " " + post.getId());
 
 
             }
@@ -236,7 +282,6 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
             @Override
             public void onClick(View v) {
                 fragmentManager.popBackStack();
-
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.rl_sellMain, new FragmentB1()).addToBackStack("b1");
                 fragmentTransaction.commit();
@@ -248,7 +293,8 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
             @Override
             public void onClick(View v) {
                 fragmentManager.popBackStack();
-                bundle.putString("ct", tvDescription.getText().toString());
+                bundle.putString("Description", tvDescription.getText().toString());
+
                 fragmentB5.setArguments(bundle);
                 fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.rl_sellMain, fragmentB5).addToBackStack("b5");
@@ -258,48 +304,48 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
         });
     }
 
-    private void createPost(final String postName, final String Price, final String Address,
-                            final String PhoneNumber, final String Description,
-                            final String UserId, final String AreaId, final String CategoryChildId) {
+    private void updatePost() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("PostName", postName);
-        jsonObject.addProperty("Price", Price);
-        jsonObject.addProperty("Address", Address);
-        jsonObject.addProperty("PhoneNumber", PhoneNumber);
-        jsonObject.addProperty("Description", Description);
-        jsonObject.addProperty("UserId", UserId);
+        jsonObject.addProperty("PostName", tvTitle.getText().toString());
+        jsonObject.addProperty("Price", tvPrice.getText().toString());
+        jsonObject.addProperty("Address", tvAddress.getText().toString());
+        jsonObject.addProperty("PhoneNumber", tvSdt.getText().toString());
+        jsonObject.addProperty("Description", tvDescription.getText().toString());
+        jsonObject.addProperty("UserId", post.getUserId());
         jsonObject.addProperty("AreaId", AreaId);
+        jsonObject.addProperty("PostUrl", "");
         jsonObject.addProperty("CategoryChildId", CategoryChildId);
+        jsonObject.addProperty("Status", post.getStatus());
         sLoading.show();
-
-        service.createPost(jsonObject).
-                subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).
-                subscribe(new Observer<PostNew>() {
-                    String id = "";
-
+        service.updatePost(post.getId(), jsonObject)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Post>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(PostNew postNew) {
-                        id = postNew.getData().getId();
+                    public void onNext(Post post) {
 
+                        Log.d("AAA", post.getPostName() + "");
 
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        sLoading.dismiss();
                         Log.d("AAA", e + "");
+                        sLoading.dismiss();
 
                     }
 
                     @Override
                     public void onComplete() {
-                        sendIdPost.sendIDPost(id);
+                        Log.d("AAA", "ok");
+                        sendIdPost.sendIDPost(post.getId());
+                        sLoading.dismiss();
+                        Toast.makeText(EditPostActivity.this, "Thành công!", Toast.LENGTH_SHORT).show();
 
 
                     }
@@ -308,21 +354,47 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
 
 
     private void init() {
+
         sLoading = new SLoading(this);
+        listImg = new ArrayList<>();
+        LinearLayoutManager layoutManager
+                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvImgSell.setLayoutManager(layoutManager);
+        fragmentGalleryPhotoList = new FragmentGalleryPhotoList();
+        Intent intent = getIntent();
+        if (intent != null) {
+            Gson gson = new Gson();
+            post = gson.fromJson(intent.getStringExtra("PostEdit"), Post.class);
+            getNameCategoryparent(post.getCategoryChildId());
+            tvTitle.setText(post.getPostName());
+            tvAddress.setText(post.getAddress());
+            tvSdt.setText(post.getPhoneNumber());
+            tvPrice.setText(post.getPrice());
+            tvDescription.setText(post.getDescription());
+            for (int i = 0; i < post.getPostUrl().size(); i++) {
+                if (!post.getPostUrl().get(i).toString().trim().equals("")) {
+                    listImg.add(post.getPostUrl().get(i));
+                }
+            }
+
+            imageSellAdapter = new ImageSellAdapter(listImg, this);
+            rvImgSell.setAdapter(imageSellAdapter);
+            AreaId = post.getAreaId();
+            CategoryChildId = post.getCategoryChildId();
+
+
+        }
+
         sharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
         bundle = new Bundle();
         sendIdPost = (SendIdPost) this;
-        listImg = new ArrayList<>();
+        sendIDCategoryparent = (SendIDCategoryparent) this;
+
         categoryParentName = new ArrayList<>();
         excludedImages = new ArrayList<>();
         fragmentB6 = new FragmentB6();
         fragmentB4 = new FragmentB4();
         fragmentB5 = new FragmentB5();
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvImgSell.setLayoutManager(layoutManager);
-        fragmentGalleryPhotoList = new FragmentGalleryPhotoList();
-
         imageFileLoader = new ImageFileLoader(this);
         imageFileLoader.loadDeviceImages(true, false, excludedImages, new ImageLoaderListener() {
             @Override
@@ -346,17 +418,8 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     public void sendPhotolist(ArrayList<String> list, boolean closeFragment) {
         fragmentManager.popBackStack();
         listImg.addAll(list);
-        ImageSellAdapter imageSellAdapter = new ImageSellAdapter(listImg, this);
-        rvImgSell.setAdapter(imageSellAdapter);
+        imageSellAdapter.notifyDataSetChanged();
 
-        File file = new File(list.get(0));
-        String file_path = file.getAbsolutePath();
-        String[] arrFile = file_path.split("\\.");
-        file_path = arrFile[0] + System.currentTimeMillis() + "." + arrFile[1];
-        RequestBody requestFile =
-                RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("image", file_path, requestFile);
 
     }
 
@@ -388,6 +451,7 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
         Log.d("AAA", this.address);
         AreaId = "";
         AreaId += id;
+        Log.d("AAA", AreaId + "");
 
     }
 
@@ -404,6 +468,7 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
         tvCategoryChilds.setText(name);
         this.CategoryChildId = "";
         this.CategoryChildId += categoryChildId;
+        Log.d("AAA", categoryChildId + "");
 
     }
 
@@ -413,17 +478,11 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
 
     }
 
-    Fragment getCurrentFragment() {
-        Fragment currentFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.rl_sellMain);
-        return currentFragment;
-    }
-
-
     @Override
     public void sendIDPost(String id) {
 
         sLoading.show();
+        Log.d("AAA", listImg.size() + "");
         for (int i = 0; i < listImg.size(); i++) {
             File file = new File(listImg.get(i));
             String file_path = file.getAbsolutePath();
@@ -451,7 +510,7 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.d("AAA", e + "");
+                            Log.d("AAA", e + "erro");
 
                         }
 
@@ -465,6 +524,99 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
         Toast.makeText(this, "Thành công!", Toast.LENGTH_SHORT).show();
         finish();
 
+    }
+
+    private void getNameCategoryparent(String id) {
+        sLoading.show();
+        final APIService service = APIClient.getClient();
+        service.getIdCategoryParents(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Categorychild1>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Categorychild1 categorychild) {
+                        iDCategoryparent = categorychild.getCategoryParent();
+                        nameCategoryChild = categorychild.getCategoryChildName();
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        sendIDCategoryparent.sendIDCategoryparent(iDCategoryparent);
+                        tvCategoryChilds.setText(nameCategoryChild);
+
+
+                    }
+                });
+    }
+
+    @Override
+    public void sendIDCategoryparent(String iD) {
+
+        final APIService service = APIClient.getClient();
+        service.ListPost(iD)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Categoryparen>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Categoryparen categoryparen) {
+                        nameCategoryparent = categoryparen.getCategoryParentName();
+
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                        sLoading.dismiss();
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        tvCategoryparent.setText(nameCategoryparent);
+                        sLoading.dismiss();
+
+
+                    }
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 123 && resultCode == this.RESULT_OK) {
+            listImg.add(getRealPathFromURI(uri));
+
+        }
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String path = null;
+        String[] proj = {MediaStore.MediaColumns.DATA};
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            path = cursor.getString(column_index);
+        }
+        cursor.close();
+        return path;
     }
 }
 

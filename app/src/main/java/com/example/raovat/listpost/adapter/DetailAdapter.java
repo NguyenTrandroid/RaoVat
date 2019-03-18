@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.raovat.R;
@@ -39,8 +40,8 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final DetailAdapter.ViewHolder holder, final int position) {
-        holder.textView.setText(arrayList.get(position));
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
+        holder.button.setText(arrayList.get(position));
+        holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 index = position;
@@ -49,10 +50,10 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
             }
         });
         if(index==position){
-            holder.cardView.setCardBackgroundColor(context.getColor(R.color.yellow));
+            holder.button.setBackgroundResource(R.drawable.custom_buttton_yellow);
 
         }else {
-            holder.cardView.setCardBackgroundColor(context.getColor(R.color.underline));
+            holder.button.setBackgroundResource(R.drawable.custom_button);
         }
 
 
@@ -65,12 +66,11 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
-        CardView cardView;
+        Button button;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.tv_name);
-            cardView = itemView.findViewById(R.id.cv_detail);
+            button = itemView.findViewById(R.id.bt_detail);
         }
     }
 }

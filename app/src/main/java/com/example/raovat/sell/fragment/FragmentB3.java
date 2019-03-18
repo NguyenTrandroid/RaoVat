@@ -5,23 +5,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.raovat.Models.Address;
-import com.example.raovat.Models.Categoryparen;
 import com.example.raovat.R;
 import com.example.raovat.Utils.SLoading;
 import com.example.raovat.api.APIClient;
 import com.example.raovat.api.APIService;
-import com.example.raovat.listpost.PostActivity;
-import com.example.raovat.listpost.adapter.DetailAdapter;
-import com.example.raovat.listpost.adapter.PostAdapter;
 import com.example.raovat.sell.CategoryParents;
 import com.example.raovat.sell.OnSelectCategrory;
 import com.example.raovat.sell.OnSendData;
-import com.example.raovat.sell.adapter.B2Adapter;
 import com.example.raovat.sell.adapter.B3Adapter;
 
 import java.util.ArrayList;
@@ -40,13 +37,13 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FragmentB3 extends Fragment {
     OnSelectCategrory onSelectCategrory;
-    RelativeLayout rlNext;
+    Button btnNext, btnEnd;
     RecyclerView recyclerView;
     ImageView ivBack;
     TextView txtTitle;
     SLoading sLoading;
     Bundle bundle;
-    int index;
+    int index = -1;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     OnSendData onSendData;
@@ -73,7 +70,8 @@ public class FragmentB3 extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         ivBack = view.findViewById(R.id.iv_back);
         txtTitle = view.findViewById(R.id.tv_title);
-        rlNext = view.findViewById(R.id.rl_next);
+        btnNext = view.findViewById(R.id.btn_next);
+        btnEnd = view.findViewById(R.id.btn_end);
         txtTitle.setText("Địa chỉ");
         fragmentManager = getFragmentManager();
         getAddress();
@@ -81,6 +79,7 @@ public class FragmentB3 extends Fragment {
             @Override
             public void sendPosition(int position) {
                 index = position;
+                Log.d("AAA", position + "");
 
             }
         };
@@ -91,6 +90,7 @@ public class FragmentB3 extends Fragment {
     }
 
     private void initAction() {
+        btnEnd.setVisibility(View.GONE);
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,13 +98,19 @@ public class FragmentB3 extends Fragment {
                 fragmentManager.popBackStack();
             }
         });
-        rlNext.setOnClickListener(new View.OnClickListener() {
+        btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onSendData.sendIDAddress(listAddress.get(index).getId(), listAddress.get(index).getName());
-                fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.rl_sellMain, new FragmentB7()).addToBackStack("B4");
-                fragmentTransaction.commit();
+                if (index == -1) {
+                    Toast.makeText(getContext(), "Thông tin không được trống!", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    onSendData.sendIDAddress(listAddress.get(index).getId(), listAddress.get(index).getName());
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.rl_sellMain, new FragmentB7()).addToBackStack("B4");
+                    fragmentTransaction.commit();
+
+                }
 
 
             }
@@ -154,7 +160,10 @@ public class FragmentB3 extends Fragment {
 
     @Override
     public void onDestroy() {
-        onSendData.sendIDAddress(listAddress.get(index).getId(), listAddress.get(index).getName());
+        if (index != -1) {
+            onSendData.sendIDAddress(listAddress.get(index).getId(), listAddress.get(index).getName());
+        }
+
 
         super.onDestroy();
     }

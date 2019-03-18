@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     Context context;
     ArrayList<Post> listPost;
+    int value;
 
 
     public PostAdapter(Context context, ArrayList<Post> listPost) {
@@ -45,7 +46,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull PostAdapter.ViewHolder holder, final int position) {
-
+        value = 0;
         DateFormat df = new SimpleDateFormat("dd/MM HH:mm");
         holder.tvName.setText(listPost.get(position).getPostName());
         holder.tvAddress.setText(df.format(listPost.get(position).getPostDate()) + " | " + listPost.get(position).getAddress());
@@ -55,12 +56,29 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             holder.tvNumber.setVisibility(View.GONE);
             Glide.with(context).load(R.drawable.ic_post_it).into(holder.ivPost);
 
+        } else if (listPost.get(position).getPostUrl().size() == 1 && listPost.get(position).getPostUrl().get(0).equals("")) {
+            holder.ivNumber.setVisibility(View.GONE);
+            holder.tvNumber.setVisibility(View.GONE);
+            Glide.with(context).load(R.drawable.ic_post_it).into(holder.ivPost);
+
         } else {
+
             holder.ivNumber.setVisibility(View.VISIBLE);
             holder.tvNumber.setVisibility(View.VISIBLE);
-            holder.tvNumber.setText(listPost.get(position).getPostUrl().size() + "");
+            for (int i = 0; i < listPost.get(position).getPostUrl().size(); i++) {
+                if (!listPost.get(position).getPostUrl().get(i).equals("")) {
+                    value++;
+
+                }
+            }
+            holder.tvNumber.setText(value + "");
             Drawable drawable = context.getDrawable(R.drawable.ic_post_it);
-            Glide.with(context).load(listPost.get(position).getPostUrl().get(0)).into(holder.ivPost);
+            if (listPost.get(position).getPostUrl().get(0).equals("")) {
+                Glide.with(context).load(listPost.get(position).getPostUrl().get(1)).into(holder.ivPost);
+            } else {
+                Glide.with(context).load(listPost.get(position).getPostUrl().get(0)).into(holder.ivPost);
+            }
+
             Log.d("AAA", listPost.get(position).getPostUrl().get(0) + "");
         }
 

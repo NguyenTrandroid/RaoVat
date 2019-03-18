@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -41,7 +42,7 @@ public class FragmentB1 extends Fragment {
     TextView txtTitle;
     SLoading sLoading;
     OnSelectCategrory onSelectCategrory;
-    RelativeLayout rlNext;
+    Button btnNext, btnEnd;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     FragmentB2 fragmentB2;
@@ -63,7 +64,8 @@ public class FragmentB1 extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         ivBack = view.findViewById(R.id.iv_back);
         txtTitle = view.findViewById(R.id.tv_title);
-        rlNext = view.findViewById(R.id.rl_next);
+        btnNext = view.findViewById(R.id.btn_next);
+        btnEnd = view.findViewById(R.id.btn_end);
         fragmentManager = getFragmentManager();
         bundle = new Bundle();
         fragmentB2 = new FragmentB2();
@@ -85,7 +87,8 @@ public class FragmentB1 extends Fragment {
     }
 
     private void initAction() {
-        rlNext.setOnClickListener(new View.OnClickListener() {
+        btnEnd.setVisibility(View.GONE);
+        btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -100,7 +103,7 @@ public class FragmentB1 extends Fragment {
             @Override
             public void onClick(View v) {
 
-                getActivity().finish();
+                fragmentManager.popBackStack();
             }
         });
 

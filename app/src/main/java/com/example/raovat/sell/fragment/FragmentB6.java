@@ -34,6 +34,7 @@ public class FragmentB6 extends Fragment {
     FragmentManager fragmentManager;
     OnSendData onSendData;
     String price;
+    String sdt = "";
     ImageView ivBack;
 
 
@@ -44,6 +45,7 @@ public class FragmentB6 extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             price = bundle.getString("Price");
+            sdt = bundle.getString("Sdt")+"";
         }
     }
 
@@ -55,10 +57,15 @@ public class FragmentB6 extends Fragment {
         edtMoney = view.findViewById(R.id.edt_money);
         rlNext = view.findViewById(R.id.rl_next);
         edtMoney.addTextChangedListener(new NumberTextWatcher(edtMoney));
-        fragmentManager=getFragmentManager();
+        fragmentManager = getFragmentManager();
         edtSdt = view.findViewById(R.id.edt_sdt);
-        ivBack=view.findViewById(R.id.iv_back);
-        edtSdt.setText(sharedPreferences.getString("Sdt", ""));
+        ivBack = view.findViewById(R.id.iv_back);
+        if (sdt.equals("")) {
+            edtSdt.setText(sharedPreferences.getString("Sdt", ""));
+        } else {
+            edtSdt.setText(sdt);
+        }
+
         edtMoney.setText(price);
         initAction();
 
@@ -91,7 +98,7 @@ public class FragmentB6 extends Fragment {
 
     @Override
     public void onDestroy() {
-        onSendData.sendPriceSdt(edtMoney.getText().toString()+"", edtSdt.getText().toString());
+        onSendData.sendPriceSdt(edtMoney.getText().toString() + "", edtSdt.getText().toString());
 
         super.onDestroy();
     }

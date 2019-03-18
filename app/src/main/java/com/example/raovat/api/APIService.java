@@ -1,6 +1,7 @@
 package com.example.raovat.api;
 
 import com.example.raovat.Models.Address;
+import com.example.raovat.Models.Categorychild1;
 import com.example.raovat.Models.Categoryparen;
 import com.example.raovat.Models.Categoryparen2;
 import com.example.raovat.Models.InfoUser;
@@ -19,7 +20,6 @@ import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -45,6 +45,10 @@ public interface APIService {
     @GET("categoryparent/api/query/{id}")
     Observable<Categoryparen> ListPost(@Path("id") String id);
 
+
+    @GET("categorychild/api/{id}")
+    Observable<Categorychild1> getIdCategoryParents(@Path("id") String id);
+
     @GET("categoryparent/api")
     Observable<Categoryparen2> getListNameCategoryParents();
 
@@ -66,7 +70,7 @@ public interface APIService {
     Observable<JsonObject> delPostUser(@Path("id") String id);
 
     @PUT("post/api/update/{id}")
-    Observable<Post> updateSttPost(@Path("id") String id, @Body JsonObject object);
+    Observable<Post> updatePost(@Path("id") String id, @Body JsonObject object);
 
     @GET("search/api/{postname}")
     Observable<SearchKey> listSearch(@Path("postname") String key);
@@ -74,7 +78,5 @@ public interface APIService {
     @GET("search/query?&&")
     Observable<MultiSearch> searchMulti(@Query("area") String idkv, @Query("categoryParent") String iddm, @Query("categoryChild") String iddmc);
 
-    @POST("api/WebApi/ThemKhachHang?MaKH={MaKH}&TenKH&diachi&CMND&SDT")
-    Observable<String> loginn();
 
 }

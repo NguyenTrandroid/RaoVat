@@ -63,7 +63,7 @@ public class B3Adapter extends RecyclerView.Adapter<B3Adapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     selectedPosition = getAdapterPosition();
-                    onSelectCategrory.sendPosition(getAdapterPosition());
+                    onSelectCategrory.sendPosition(selectedPosition);
                     notifyDataSetChanged();
                 }
             });

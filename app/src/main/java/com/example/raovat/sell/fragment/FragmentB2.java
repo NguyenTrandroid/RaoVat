@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,9 +16,6 @@ import com.example.raovat.R;
 import com.example.raovat.Utils.SLoading;
 import com.example.raovat.api.APIClient;
 import com.example.raovat.api.APIService;
-import com.example.raovat.listpost.PostActivity;
-import com.example.raovat.listpost.adapter.DetailAdapter;
-import com.example.raovat.listpost.adapter.PostAdapter;
 import com.example.raovat.sell.CategoryParents;
 import com.example.raovat.sell.OnSelectCategrory;
 import com.example.raovat.sell.OnSendData;
@@ -39,7 +37,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FragmentB2 extends Fragment {
     OnSelectCategrory onSelectCategrory;
-    RelativeLayout rlNext;
+    Button btnNext;
+    Button btnEnd;
     RecyclerView recyclerView;
     ImageView ivBack;
     TextView txtTitle;
@@ -48,7 +47,7 @@ public class FragmentB2 extends Fragment {
     boolean checknull;
     ArrayList<CategoryParents> listDetail;
     String id;
-    int index;
+    int index = -1;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     OnSendData onSendData;
@@ -73,7 +72,8 @@ public class FragmentB2 extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         ivBack = view.findViewById(R.id.iv_back);
         txtTitle = view.findViewById(R.id.tv_title);
-        rlNext = view.findViewById(R.id.rl_next);
+        btnNext = view.findViewById(R.id.btn_next);
+        btnEnd = view.findViewById(R.id.btn_end);
         fragmentManager = getFragmentManager();
         getListCategoryChild(id);
         onSelectCategrory = new OnSelectCategrory() {
@@ -91,6 +91,7 @@ public class FragmentB2 extends Fragment {
     }
 
     private void initAction() {
+
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,15 +99,25 @@ public class FragmentB2 extends Fragment {
                 fragmentManager.popBackStack();
             }
         });
-        rlNext.setOnClickListener(new View.OnClickListener() {
+        btnEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack(getFragmentManager().getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+            }
+        });
+        btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!checknull) {
-                    Log.d("AAA",listDetail.get(index).getId());
-                    onSendData.sendCategoryChildId(listDetail.get(index).getId(), listDetail.get(index).getName());
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.rl_sellMain, new FragmentB3()).addToBackStack("B3");
-                    fragmentTransaction.commit();
+                    if (index != -1) {
+                        onSendData.sendCategoryChildId(listDetail.get(index).getId(), listDetail.get(index).getName());
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.rl_sellMain, new FragmentB3()).addToBackStack("B3");
+                        fragmentTransaction.commit();
+                    } else {
+                        Toast.makeText(getContext(), "Thông tin không được trống!", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getContext(), "Không hợp lệ!", Toast.LENGTH_SHORT).show();
 
@@ -165,7 +176,12 @@ public class FragmentB2 extends Fragment {
     @Override
     public void onDestroy() {
         if (!checknull) {
-            onSendData.sendCategoryChildId(listDetail.get(index).getId(), listDetail.get(index).getName());
+            if (index != -1) {
+                onSendData.sendCategoryChildId(listDetail.get(index).getId(), listDetail.get(index).getName());
+            } else {
+                onSendData.sendCategoryChildId("", "");
+
+            }
         }
         super.onDestroy();
     }

@@ -1,5 +1,6 @@
 package com.example.raovat.listpost;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.example.raovat.api.APIClient;
 import com.example.raovat.api.APIService;
 import com.example.raovat.listpost.adapter.DetailAdapter;
 import com.example.raovat.listpost.adapter.PostAdapter;
+import com.example.raovat.search.SearchActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -92,10 +94,9 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
         spnAddress.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                idAddress = "";
-                idAddress = String.valueOf(listIdAddress.get(position).getId());
-                Log.d("AAA", idAddress + " " + iDCategoryParents + " " + idDetail+" test");
-                 getListSearch("", iDCategoryParents, idDetail);
+                Log.d("AAA", position + "");
+                idAddress = listIdAddress.get(position).getId();
+                getListSearch(listIdAddress.get(position).getId(), iDCategoryParents, "");
             }
 
             @Override
@@ -110,7 +111,9 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                 listPost.clear();
                 iDCategoryParents = "";
                 getListCategoryChild(listIDCategoryParents.get(position).getId());
+                getListSearch(idAddress, listIDCategoryParents.get(position).getId(), "");
                 iDCategoryParents = listIDCategoryParents.get(position).getId();
+
 
             }
 
@@ -119,10 +122,22 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
 
             }
         });
+        rlSv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(PostActivity.this, SearchActivity.class));
+                finish();
+            }
+        });
 
     }
 
     private void init() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            iDCategoryParents = intent.getStringExtra("IdCategoryparent");
+        }
+        Log.d("AAA", iDCategoryParents + "");
         sLoading = new SLoading(this);
         listPost = new ArrayList<>();
         listAddress = new ArrayList<>();
@@ -142,7 +157,6 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvDetail.setLayoutManager(layoutManager);
         rvPost.setLayoutManager(new GridLayoutManager(this, 1));
-        // getListCategoryChild("5c7348b52583740004db7347");
 
 
     }
@@ -157,6 +171,7 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
     }
 
     private void getListSearch(String idAddress, String idCategoryParents, String idDetail) {
+        progressBar.setVisibility(View.VISIBLE);
         service.searchMulti(idAddress, idCategoryParents, idDetail)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -198,6 +213,7 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                         });
                         PostAdapter postAdapter = new PostAdapter(PostActivity.this, listPost);
                         rvPost.setAdapter(postAdapter);
+                        progressBar.setVisibility(View.GONE);
                         sLoading.dismiss();
 
 
@@ -224,11 +240,11 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                         for (int i = 0; i < categoryparen.getCategoryChilds().size(); i++) {
                             listDetail.add(categoryparen.getCategoryChilds().get(i).getCategoryChildName());
                             listIDDetail.add(categoryparen.getCategoryChilds().get(i).getId());
-                            for (int j = 0; j < categoryparen.getCategoryChilds().get(i).getPosts().size(); j++) {
-                                if (!categoryparen.getCategoryChilds().get(i).getPosts().get(j).getStatus()) {
-                                    listPost.add(categoryparen.getCategoryChilds().get(i).getPosts().get(j));
-                                }
-                            }
+//                            for (int j = 0; j < categoryparen.getCategoryChilds().get(i).getPosts().size(); j++) {
+//                                if (!categoryparen.getCategoryChilds().get(i).getPosts().get(j).getStatus()) {
+//                                    listPost.add(categoryparen.getCategoryChilds().get(i).getPosts().get(j));
+//                                }
+//                            }
 
                         }
 
@@ -244,22 +260,9 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
 
                     @Override
                     public void onComplete() {
-                        final Calendar cal1 = Calendar.getInstance();
-                        final Calendar cal2 = Calendar.getInstance();
+
                         DetailAdapter detailAdapter = new DetailAdapter(PostActivity.this, listDetail);
                         rvDetail.setAdapter(detailAdapter);
-                        Collections.sort(listPost, new Comparator<Post>() {
-
-                            @Override
-                            public int compare(Post o1, Post o2) {
-                                cal1.setTime(o1.getPostDate());
-                                cal2.setTime(o2.getPostDate());
-                                return (int) (cal2.getTimeInMillis() - cal1.getTimeInMillis());
-                            }
-                        });
-                        PostAdapter postAdapter = new PostAdapter(PostActivity.this, listPost);
-                        rvPost.setAdapter(postAdapter);
-                        sLoading.dismiss();
 
 
                     }
@@ -300,6 +303,7 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spnAddress.setAdapter(adapter);
                         spnAddress.setSelection(2);
+                        idAddress = listIdAddress.get(2).getId();
                     }
                 });
 
@@ -320,7 +324,7 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                     public void onNext(Categoryparen2 categoryparen2) {
                         listIDCategoryParents.addAll(categoryparen2.getData());
                         for (int i = 0; i < categoryparen2.getData().size(); i++) {
-                            if (categoryparen2.getData().get(i).getId().equals("5c7348b52583740004db7347")) {
+                            if (categoryparen2.getData().get(i).getId().equals(iDCategoryParents)) {
                                 index = i;
                             }
                             listNameCategoryParents.add(categoryparen2.getData().get(i).getCategoryParentName());
@@ -331,6 +335,7 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
 
                     @Override
                     public void onError(Throwable e) {
+                        sLoading.dismiss();
 
                     }
 
@@ -340,6 +345,7 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         spnDetail.setAdapter(adapter);
                         spnDetail.setSelection(index);
+                        sLoading.dismiss();
 
 
                     }

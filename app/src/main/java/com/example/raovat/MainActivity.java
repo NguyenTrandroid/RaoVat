@@ -71,42 +71,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-//        init();
-////        initAction();
-        final APIService service = APIClient.getClient();
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("MaKH", "12312");
-        jsonObject.addProperty("TenKH", "12312");
-        jsonObject.addProperty("diachi", "12312");
-        jsonObject.addProperty("CMND", "12312");
-        jsonObject.addProperty("SDT", "12312");
+        init();
+        initAction();
 
-        service.loginn(jsonObject)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        Log.d("AAA", s + "");
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("AAA", e + "");
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
 
     }
 
@@ -193,7 +160,10 @@ public class MainActivity extends AppCompatActivity {
         rlDodientu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, PostActivity.class));
+                Intent intent = new Intent(MainActivity.this, PostActivity.class);
+                intent.putExtra("IdCategoryparent", "5c7348cf2583740004db7348");
+                startActivity(intent);
+
 
             }
         });

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!-- you can use any color you want I used here gray color-->
+    <size
+        android:width="@dimen/dp100"
+        android:height="@dimen/dp40" />
+    <corners android:radius="@dimen/dp150" />
+    <gradient
+        android:endColor="#C2B774"
+        android:startColor="@color/yellow"
+        android:type="linear" />
+</shape>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -19,7 +20,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public class FragmentB7 extends Fragment {
-    RelativeLayout rlNext;
+    Button btnNext, btnEnd;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     OnSendData onSendData;
@@ -36,9 +37,10 @@ public class FragmentB7 extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_address, null);
-        rlNext = view.findViewById(R.id.rl_next);
+        btnNext = view.findViewById(R.id.btn_next);
+        btnEnd = view.findViewById(R.id.btn_end);
         edtTitle = view.findViewById(R.id.ed_title);
-        ivBack=view.findViewById(R.id.iv_back);
+        ivBack = view.findViewById(R.id.iv_back);
         fragmentManager = getFragmentManager();
         initAction();
         return view;
@@ -60,20 +62,32 @@ public class FragmentB7 extends Fragment {
                 fragmentManager.popBackStack();
             }
         });
-        rlNext.setOnClickListener(new View.OnClickListener() {
+        btnEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (edtTitle.getText().toString().trim().equals("")) {
-                    Toast.makeText(getContext(), "Địa chỉ không được trống!", Toast.LENGTH_SHORT).show();
-                } else {
-                    onSendData.sendAddress(edtTitle.getText().toString());
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.rl_sellMain, new FragmentB4()).addToBackStack("B5");
-                    fragmentTransaction.commit();
-                }
+
+                getFragmentManager().popBackStack(getFragmentManager().getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
 
             }
         });
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSendData.sendAddress(edtTitle.getText().toString());
+                fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.rl_sellMain, new FragmentB4()).addToBackStack("B5");
+                fragmentTransaction.commit();
+            }
 
+
+    });
+
+}
+
+    @Override
+    public void onDestroyView() {
+        onSendData.sendAddress(edtTitle.getText().toString());
+        super.onDestroyView();
     }
 }

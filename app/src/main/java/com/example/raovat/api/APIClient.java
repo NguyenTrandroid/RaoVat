@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIClient {
     private static APIService ideaService;
-    private static String BASE_URL = "http://192.168.70.126/QLVeTauXe/";
+    private static String BASE_URL = "https://node-server-api.azurewebsites.net/";
     private static Retrofit INSTANCE = null;
     private static Gson gson;
 

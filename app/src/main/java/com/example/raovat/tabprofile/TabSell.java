@@ -9,18 +9,13 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Switch;
 import android.widget.Toast;
 
-import com.example.raovat.Models.Categoryparen;
 import com.example.raovat.Models.Post;
 import com.example.raovat.R;
 import com.example.raovat.Utils.SLoading;
 import com.example.raovat.api.APIClient;
 import com.example.raovat.api.APIService;
-import com.example.raovat.listpost.PostActivity;
-import com.example.raovat.listpost.adapter.DetailAdapter;
-import com.example.raovat.listpost.adapter.PostAdapter;
 import com.example.raovat.sell.SellActivity;
 import com.google.gson.JsonObject;
 
@@ -157,7 +152,6 @@ public class TabSell extends Fragment {
                 JsonObject jsonObject = new JsonObject();
                 Post post = listPost.get(item.getGroupId());
                 EventBus.getDefault().post(post);
-
                 jsonObject.addProperty("PostName", post.getPostName());
                 jsonObject.addProperty("Price", post.getPrice());
                 jsonObject.addProperty("Address", post.getAddress());
@@ -167,7 +161,7 @@ public class TabSell extends Fragment {
                 jsonObject.addProperty("AreaId", post.getAreaId());
                 jsonObject.addProperty("CategoryChildId", post.getCategoryChildId());
                 jsonObject.addProperty("Status", true);
-                service.updateSttPost(listPost.get((item.getGroupId())).getId(), jsonObject)
+                service.updatePost(listPost.get((item.getGroupId())).getId(), jsonObject)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<Post>() {

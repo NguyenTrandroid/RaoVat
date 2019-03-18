@@ -5,11 +5,11 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CategoryChild {
+public class Categorychild1 {
 
     @SerializedName("Posts")
     @Expose
-    private List<Post> posts = null;
+    private List<String> posts = null;
     @SerializedName("_id")
     @Expose
     private String id;
@@ -19,15 +19,12 @@ public class CategoryChild {
     @SerializedName("CategoryParent")
     @Expose
     private String categoryParent;
-    @SerializedName("__v")
-    @Expose
-    private Integer v;
 
-    public List<Post> getPosts() {
+    public List<String> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<Post> posts) {
+    public void setPosts(List<String> posts) {
         this.posts = posts;
     }
 
@@ -53,14 +50,6 @@ public class CategoryChild {
 
     public void setCategoryParent(String categoryParent) {
         this.categoryParent = categoryParent;
-    }
-
-    public Integer getV() {
-        return v;
-    }
-
-    public void setV(Integer v) {
-        this.v = v;
     }
 
 }

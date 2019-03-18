@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.raovat.R;
@@ -37,12 +38,15 @@ public class ImageSellAdapter extends RecyclerView.Adapter<ImageSellAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ImageSellAdapter.ViewHolder holder, final int position) {
+
         Glide.with(context).load(listFrameAsset.get(position)).into(holder.imageView);
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
+
+
+        holder.ivDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
+                listFrameAsset.remove(position);
+                notifyDataSetChanged();
             }
         });
 
@@ -55,10 +59,14 @@ public class ImageSellAdapter extends RecyclerView.Adapter<ImageSellAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        ImageView ivDel;
+        RelativeLayout relativeLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.iv_photo);
+            ivDel = itemView.findViewById(R.id.iv_del);
+            relativeLayout = itemView.findViewById(R.id.rl_imgPost);
         }
     }
 }

@@ -64,6 +64,7 @@
             android:orientation="horizontal">
 
             <Spinner
+
                 android:layout_weight="1"
                 android:id="@+id/spn_address"
                 android:layout_width="match_parent"
@@ -92,6 +93,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:background="#EBEBD7"
         android:id="@+id/rl_detail"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp50"
@@ -101,7 +103,6 @@
             android:id="@+id/rv_detail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/dp3"
             android:orientation="horizontal"></androidx.recyclerview.widget.RecyclerView>
 
         <ImageView

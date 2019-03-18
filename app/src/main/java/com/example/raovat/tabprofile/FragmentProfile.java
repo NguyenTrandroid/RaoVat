@@ -18,10 +18,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-public class FragmentProfile extends Fragment  {
+public class FragmentProfile extends Fragment {
     private ViewPager pager;
     private TabLayout tabLayout;
-
 
 
     @Override
@@ -44,7 +43,7 @@ public class FragmentProfile extends Fragment  {
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if(tab.getPosition()==1){
+                if (tab.getPosition() == 1) {
 
                 }
             }

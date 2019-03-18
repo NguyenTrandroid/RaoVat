@@ -42,6 +42,7 @@ public class SearchActivity extends AppCompatActivity {
     ArrayList<String> listTemp;
     ArrayList<Post> listSearch;
     boolean checkSearch;
+    boolean checkKey = true;
 
     ArrayAdapter<String> itemsAdapter;
     Realm realm;
@@ -77,8 +78,23 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(final String query) {
                 cvSearch.setVisibility(View.GONE);
-                saveKey(query);
-                list.add(query);
+                if (list.size() == 0) {
+                    Log.d("AAA", "null");
+                    saveKey(query);
+                    list.add(query);
+                } else {
+                    for (int i = 0; i < list.size(); i++) {
+                        if (query.equals(list.get(i))) {
+                            checkKey = false;
+                            break;
+                        }
+                    }
+                    if (checkKey) {
+                        saveKey(query);
+                        list.add(query);
+                    }
+                }
+
                 listSearch.clear();
                 getListSearch(query);
                 return false;
@@ -134,6 +150,7 @@ public class SearchActivity extends AppCompatActivity {
                 SearchHistory history = bgRealm.createObject(SearchHistory.class);
                 history.setStr(str);
 
+
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -188,7 +205,7 @@ public class SearchActivity extends AppCompatActivity {
                     @Override
                     public void onNext(SearchKey searchKey) {
                         checkSearch = searchKey.getStatus();
-                        if(searchKey.getStatus()){
+                        if (searchKey.getStatus()) {
                             listSearch.addAll(searchKey.getData());
                         }
 

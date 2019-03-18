@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -20,28 +21,35 @@ import androidx.fragment.app.FragmentTransaction;
 
 
 public class FragmentB4 extends Fragment {
-    RelativeLayout rlNext;
+    Button btnNext,btnEnd;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     OnSendData onSendData;
     EditText edtTitle;
     ImageView ivBack;
+    String title;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onSendData = (OnSendData) getContext();
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            title = bundle.getString("Title");
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_title, null);
-        rlNext = view.findViewById(R.id.rl_next);
+        btnNext = view.findViewById(R.id.btn_next);
+        btnEnd = view.findViewById(R.id.btn_end);
         edtTitle = view.findViewById(R.id.ed_title);
         ivBack = view.findViewById(R.id.iv_back);
         fragmentManager = getFragmentManager();
+        edtTitle.setText(title);
         initAction();
         return view;
 
@@ -55,7 +63,19 @@ public class FragmentB4 extends Fragment {
                 fragmentManager.popBackStack();
             }
         });
-        rlNext.setOnClickListener(new View.OnClickListener() {
+        btnEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (edtTitle.getText().toString().trim().equals("")) {
+                    Toast.makeText(getContext(), "Tiêu đề không được trống!", Toast.LENGTH_SHORT).show();
+                }else {
+                    getFragmentManager().popBackStack(getFragmentManager().getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+                }
+
+            }
+        });
+        btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (edtTitle.getText().toString().trim().equals("")) {
@@ -75,7 +95,6 @@ public class FragmentB4 extends Fragment {
     @Override
     public void onDestroy() {
         onSendData.sendPostName(edtTitle.getText().toString());
-
         super.onDestroy();
     }
 }

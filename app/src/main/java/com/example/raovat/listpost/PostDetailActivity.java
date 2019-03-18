@@ -17,6 +17,7 @@ import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -26,6 +27,7 @@ import butterknife.ButterKnife;
 
 public class PostDetailActivity extends AppCompatActivity {
     Post post;
+    ArrayList<String> lisImg;
 
     @BindView(R.id.iv_back)
     ImageView ivBack;
@@ -77,9 +79,16 @@ public class PostDetailActivity extends AppCompatActivity {
 
             }
         });
+        ivBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void init() {
+        lisImg = new ArrayList<>();
         Intent intent = getIntent();
         if (intent != null) {
             Gson gson = new Gson();
@@ -92,14 +101,19 @@ public class PostDetailActivity extends AppCompatActivity {
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             tvDate.setText(df.format(post.getPostDate()));
             if (post.getPostUrl().size() != 0) {
-                PagerAdapter adapter = new PagerAdapter(this, post.getPostUrl());
+                for (int i = 0; i < post.getPostUrl().size(); i++) {
+                    if (!post.getPostUrl().get(i).equals("")) {
+                        lisImg.add(post.getPostUrl().get(i));
+                    }
+
+                }
+
+                PagerAdapter adapter = new PagerAdapter(this,lisImg);
                 vpImgPost.setAdapter(adapter);
                 dotsIndicator.setViewPager(vpImgPost);
             } else {
                 ivNotImg.setVisibility(View.VISIBLE);
                 dotsIndicator.setVisibility(View.INVISIBLE);
-
-
             }
 
 

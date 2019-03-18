@@ -4,12 +4,20 @@
     android:layout_height="@dimen/dp100"
     android:layout_margin="@dimen/dp5"
     android:background="@color/milk1"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:id="@+id/rl_imgPost">
 
     <ImageView
+        android:scaleType="fitXY"
         android:id="@+id/iv_photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
+    <ImageView
+        android:id="@+id/iv_del"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>
