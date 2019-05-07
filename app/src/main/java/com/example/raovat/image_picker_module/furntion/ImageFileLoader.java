@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 import androidx.annotation.Nullable;
 
 
-public class ImageFileLoader {
+public class    ImageFileLoader {
 
     private Context context;
     private ExecutorService executorService;
@@ -132,7 +132,7 @@ public class ImageFileLoader {
                             continue;
 
                         Image image = new Image(id, name, path);
-                        if(includePhoto==false){
+                        if(!includePhoto){
                             if(!dir.isEmpty()){
                                 if(!dir.equals("frame")){
                                     String root = Environment.getExternalStorageDirectory().toString()+"/sticker/"+dir;

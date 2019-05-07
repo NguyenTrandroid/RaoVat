@@ -31,7 +31,6 @@ public class FragmentGallerySelect extends Fragment implements GalleryFolderSele
     ArrayList<String> foldernames;
     ArrayList<String> firstimages;
     FragmentGalleryPhotoList fragmentGalleryPhotoList;
-    FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     ImageView imgClose;
     Bundle bundle;

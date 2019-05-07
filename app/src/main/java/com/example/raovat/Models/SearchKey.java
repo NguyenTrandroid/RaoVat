@@ -18,16 +18,10 @@ public class SearchKey {
         return status;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
 
     public List<Post> getData() {
         return data;
     }
 
-    public void setData(List<Post> data) {
-        this.data = data;
-    }
 
 }

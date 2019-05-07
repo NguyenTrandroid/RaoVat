@@ -18,12 +18,6 @@ public class InfoCategoryparen {
         this.name = name;
     }
 
-    public String getiD() {
-        return iD;
-    }
 
-    public void setiD(String iD) {
-        this.iD = iD;
-    }
 }
 

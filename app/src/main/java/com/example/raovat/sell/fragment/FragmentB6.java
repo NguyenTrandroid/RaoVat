@@ -45,7 +45,7 @@ public class FragmentB6 extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             price = bundle.getString("Price");
-            sdt = bundle.getString("Sdt")+"";
+            sdt = bundle.getString("Sdt") + "";
         }
     }
 
@@ -119,7 +119,6 @@ public class FragmentB6 extends Fragment {
             hasFractionalPart = false;
         }
 
-        @SuppressWarnings("unused")
         private static final String TAG = "NumberTextWatcher";
 
         public void afterTextChanged(Editable s) {

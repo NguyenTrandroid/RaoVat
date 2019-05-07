@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -133,6 +132,7 @@ public class FragmentB3 extends Fragment {
                     @Override
                     public void onNext(Address address) {
                         for (int i = 0; i < address.getData().size(); i++) {
+                            if(!address.getData().get(i).getId().equals("5c734abd6e3a6a3f348443ec"))
                             listAddress.add(new CategoryParents(address.getData().get(i).getAreaName(),
                                     address.getData().get(i).getId()));
 

@@ -16,20 +16,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".tabprofile.EditPostActivity"></activity>
-        <activity android:name=".listpost.PostDetailActivity" />
-        <activity android:name=".listpost.PostActivity" />
-        <activity android:name=".search.SearchActivity" />
-        <activity android:name=".sell.SellActivity" />
-        <activity android:name=".login.SignUpActivity" />
-        <activity android:name=".login.LoginActivity">
+        <activity
+            android:name=".SplashScreenActivity"
+            android:theme="@style/SplashscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".tabprofile.EditPostActivity" />
+        <activity android:name=".posts.PostDetailActivity" />
+        <activity android:name=".posts.PostActivity" />
+        <activity android:name=".search.SearchActivity" />
+        <activity android:name=".sell.SellActivity" />
+        <activity android:name=".login.SignUpActivity" />
+        <activity android:name=".login.LoginActivity">
+        </activity>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

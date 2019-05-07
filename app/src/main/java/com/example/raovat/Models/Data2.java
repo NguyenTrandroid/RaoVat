@@ -23,7 +23,4 @@ public class Data2 {
         return areaName;
     }
 
-    public void setAreaName(String areaName) {
-        this.areaName = areaName;
-    }
 }

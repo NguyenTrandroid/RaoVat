@@ -1,15 +1,11 @@
 package com.example.raovat.Models;
 
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Categorychild1 {
 
-    @SerializedName("Posts")
-    @Expose
-    private List<String> posts = null;
+
     @SerializedName("_id")
     @Expose
     private String id;
@@ -20,13 +16,6 @@ public class Categorychild1 {
     @Expose
     private String categoryParent;
 
-    public List<String> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<String> posts) {
-        this.posts = posts;
-    }
 
     public String getId() {
         return id;
@@ -40,16 +29,9 @@ public class Categorychild1 {
         return categoryChildName;
     }
 
-    public void setCategoryChildName(String categoryChildName) {
-        this.categoryChildName = categoryChildName;
-    }
-
     public String getCategoryParent() {
         return categoryParent;
     }
 
-    public void setCategoryParent(String categoryParent) {
-        this.categoryParent = categoryParent;
-    }
 
 }

@@ -5,7 +5,7 @@
     android:id="@+id/rl_postMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".listpost.PostActivity">
+    tools:context=".posts.PostActivity">
 
 
     <RelativeLayout
@@ -32,17 +32,39 @@
             android:textColor="@color/black"
             android:textSize="@dimen/sp17" />
 
+
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp1"
+            android:layout_height="@dimen/dp2"
             android:layout_below="@id/iv_search"
-            android:layout_marginLeft="@dimen/dp10"
-            android:layout_marginTop="@dimen/dp2"
-            android:layout_marginRight="@dimen/dp10"
-            android:src="@color/black" />
-
-
+            android:layout_marginLeft="@dimen/dp15"
+            android:layout_marginTop="@dimen/dp5"
+            android:layout_marginRight="@dimen/dp15"
+            android:background="@color/black" />
     </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/rl_notFound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_notFound"
+            android:layout_width="@dimen/dp70"
+            android:layout_height="@dimen/dp70"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/notfind" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_notFound"
+            android:text="Không có dữ liệu "
+            android:textSize="@dimen/sp20"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
     <ProgressBar
         android:id="@+id/progressBar"
         style="@style/Widget.AppCompat.ProgressBar"
@@ -53,70 +75,95 @@
         android:visibility="invisible" />
 
     <RelativeLayout
-        android:id="@+id/rl_filter"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp52"
-        android:layout_below="@id/rl_sv">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp50"
-            android:orientation="horizontal">
-
-            <Spinner
-
-                android:layout_weight="1"
-                android:id="@+id/spn_address"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:spinnerMode="dialog"></Spinner>
-
-            <ImageView
-                android:layout_width="@dimen/dp1"
-                android:layout_height="@dimen/dp20"
-                android:layout_gravity="center_vertical"
-                android:src="@color/black" />
-
-            <Spinner
-                android:layout_weight="1"
-                android:id="@+id/spn_detail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"></Spinner>
-
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp1"
-            android:layout_alignParentBottom="true"
-            android:src="@color/black" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:background="#EBEBD7"
-        android:id="@+id/rl_detail"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp50"
-        android:layout_below="@id/rl_filter">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"></androidx.recyclerview.widget.RecyclerView>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp1"
-            android:layout_alignParentBottom="true"
-            android:src="@color/black" />
-    </RelativeLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_post"
+        android:id="@+id/rl_load"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/rl_detail"
-        android:layout_marginTop="@dimen/dp5"></androidx.recyclerview.widget.RecyclerView>
+        android:layout_below="@id/rl_sv"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:id="@+id/rl_filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp52">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp50"
+                android:orientation="horizontal">
+
+                <Spinner
+                    android:id="@+id/spn_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:spinnerMode="dialog"></Spinner>
+
+                <ImageView
+                    android:layout_width="@dimen/dp2"
+                    android:layout_height="@dimen/dp20"
+                    android:layout_gravity="center_vertical"
+                    android:src="@color/black" />
+
+                <Spinner
+                    android:id="@+id/spn_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"></Spinner>
+
+
+            </LinearLayout>
+
+            <ImageView
+
+
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp2"
+                android:layout_alignParentBottom="true"
+                android:src="@color/black" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_detail"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp50"
+            android:layout_below="@id/rl_filter"
+            android:background="#EBEBD7"
+            android:gravity="center_vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+
+                android:id="@+id/rv_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"></androidx.recyclerview.widget.RecyclerView>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp2"
+                android:layout_alignParentBottom="true"
+                android:src="@color/black" />
+        </RelativeLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/pullToRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/rl_detail">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_post"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/rl_detail"
+                android:layout_marginTop="@dimen/dp5">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

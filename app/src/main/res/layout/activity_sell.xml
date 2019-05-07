@@ -50,6 +50,7 @@
             android:orientation="horizontal"></androidx.recyclerview.widget.RecyclerView>
 
         <ImageView
+            android:id="@+id/iv_camera"
             android:layout_width="@dimen/dp100"
             android:layout_height="@dimen/dp50"
             android:layout_below="@id/rv_imgSell"
@@ -152,7 +153,7 @@
                 android:id="@+id/rl_CategoryChilds"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp70"
-                android:layout_marginTop="@dimen/dp1"
+                android:layout_marginTop="@dimen/dp2"
                 android:background="@color/white">
 
                 <TextView
@@ -189,7 +190,7 @@
                 android:id="@+id/rl_title"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp70"
-                android:layout_marginTop="@dimen/dp1"
+                android:layout_marginTop="@dimen/dp2"
                 android:background="@color/white">
 
                 <TextView
@@ -227,7 +228,7 @@
                 android:id="@+id/rl_Price"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp70"
-                android:layout_marginTop="@dimen/dp1"
+                android:layout_marginTop="@dimen/dp2"
                 android:background="@color/white">
 
                 <TextView
@@ -264,7 +265,7 @@
                 android:id="@+id/rl_Description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp1"
+                android:layout_marginTop="@dimen/dp2"
                 android:background="@color/white">
 
                 <TextView
@@ -292,7 +293,7 @@
                 android:id="@+id/rl_Address"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp70"
-                android:layout_marginTop="@dimen/dp1"
+                android:layout_marginTop="@dimen/dp2"
                 android:background="@color/white">
 
                 <TextView
@@ -317,7 +318,7 @@
                 android:id="@+id/rl_Sdt"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp70"
-                android:layout_marginTop="@dimen/dp1"
+                android:layout_marginTop="@dimen/dp2"
                 android:layout_marginBottom="@dimen/dp5"
                 android:background="@color/white">
 

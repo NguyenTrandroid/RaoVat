@@ -15,12 +15,13 @@ import com.example.raovat.Models.SearchKey;
 import com.example.raovat.R;
 import com.example.raovat.api.APIClient;
 import com.example.raovat.api.APIService;
-import com.example.raovat.listpost.adapter.PostAdapter;
+import com.example.raovat.posts.adapter.PostAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -43,8 +44,9 @@ public class SearchActivity extends AppCompatActivity {
     ArrayList<Post> listSearch;
     boolean checkSearch;
     boolean checkKey = true;
+    Calendar cal3 = Calendar.getInstance();
+    Calendar cal4 = Calendar.getInstance();
 
-    ArrayAdapter<String> itemsAdapter;
     Realm realm;
     RealmList<String> realmList;
     final APIService service = APIClient.getClient();
@@ -204,9 +206,18 @@ public class SearchActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(SearchKey searchKey) {
+                        final Calendar cal1 = Calendar.getInstance();
                         checkSearch = searchKey.getStatus();
-                        if (searchKey.getStatus()) {
-                            listSearch.addAll(searchKey.getData());
+                        if (checkSearch) {
+                            for (int i = 0; i < searchKey.getData().size(); i++) {
+                                if (!searchKey.getData().get(i).getStatus()) {
+                                    listSearch.add(searchKey.getData().get(i));
+                                    cal1.setTime(searchKey.getData().get(i).getPostDate());
+                                    Log.d("AAA", cal1.getTimeInMillis() + "");
+
+                                }
+                            }
+
                         }
 
 
@@ -223,16 +234,20 @@ public class SearchActivity extends AppCompatActivity {
 
                     @Override
                     public void onComplete() {
-                        if (checkSearch) {
-                            final Calendar cal1 = Calendar.getInstance();
-                            final Calendar cal2 = Calendar.getInstance();
+                        if (listSearch.size() != 0) {
+                            Log.d("AAA", listSearch.size() + "size");
+//                            Collections.sort(listSearch, new Comparator<Post>() {
+//
+//                                @Override
+//                                public int compare(Post o1, Post o2) {
+//                                    cal3.setTime(o1.getPostDate());
+//                                    cal4.setTime(o2.getPostDate());
+//                                    return (int) (cal4.getTimeInMillis() - cal3.getTimeInMillis());
+//                                }
+//                            });
                             Collections.sort(listSearch, new Comparator<Post>() {
-
-                                @Override
                                 public int compare(Post o1, Post o2) {
-                                    cal1.setTime(o1.getPostDate());
-                                    cal2.setTime(o2.getPostDate());
-                                    return (int) (cal2.getTimeInMillis() - cal1.getTimeInMillis());
+                                    return o2.getPostDate().compareTo(o1.getPostDate());
                                 }
                             });
                             PostAdapter postAdapter = new PostAdapter(SearchActivity.this, listSearch);
@@ -241,12 +256,20 @@ public class SearchActivity extends AppCompatActivity {
 
                         } else {
                             rlNotFound.setVisibility(View.VISIBLE);
+                            Log.d("AAA", "xe null");
                         }
                         progressBar.setVisibility(View.INVISIBLE);
 
 
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+
     }
 }
 

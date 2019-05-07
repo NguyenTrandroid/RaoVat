@@ -6,11 +6,24 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+
+    </style>
+
+    <style name="SplashscreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splashscreen</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.WhiteAccent">
         <item name="colorAccent">@color/black</item> <!-- Whatever color you want-->
 
+    </style>
+    <style name="CustomTextStyle" parent="@android:style/TextAppearance.Widget.TabWidget">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
 </resources>

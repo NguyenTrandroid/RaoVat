@@ -21,7 +21,4 @@ public class Path {
         return path;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
 }

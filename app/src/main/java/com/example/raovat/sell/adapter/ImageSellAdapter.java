@@ -11,6 +11,8 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.raovat.R;
+import com.example.raovat.sell.OnDelImg;
+import com.example.raovat.tabprofile.SendPositionRemove;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +24,14 @@ import androidx.recyclerview.widget.RecyclerView;
 public class ImageSellAdapter extends RecyclerView.Adapter<ImageSellAdapter.ViewHolder> {
     ArrayList<String> listFrameAsset;
     Context context;
+    SendPositionRemove sendPositionRemove;
+    OnDelImg onDelImg;
 
     public ImageSellAdapter(ArrayList<String> listFrameAsset, Context context) {
         this.listFrameAsset = listFrameAsset;
         this.context = context;
+        sendPositionRemove = (SendPositionRemove) context;
+        onDelImg = (OnDelImg) context;
     }
 
     @NonNull
@@ -39,13 +45,15 @@ public class ImageSellAdapter extends RecyclerView.Adapter<ImageSellAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ImageSellAdapter.ViewHolder holder, final int position) {
 
+
         Glide.with(context).load(listFrameAsset.get(position)).into(holder.imageView);
-
-
         holder.ivDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listFrameAsset.remove(position);
+                sendPositionRemove.sendPosition(position);
+                onDelImg.checkDel(true);
+
                 notifyDataSetChanged();
             }
         });

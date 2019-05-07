@@ -15,8 +15,5 @@ public class MultiSearch {
         return data;
     }
 
-    public void setData(List<Post> data) {
-        this.data = data;
-    }
 
 }

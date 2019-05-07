@@ -15,6 +15,7 @@ android {
     }
     buildTypes {
         release {
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -49,9 +50,8 @@ dependencies {
 
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
-
-
-
+    // permission runtime
+    implementation 'com.karumi:dexter:4.2.0'
 
 
 }

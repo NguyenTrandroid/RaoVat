@@ -14,32 +14,15 @@ public class Categoryparen2 {
     @Expose
     private List<Datum1> data = null;
 
-    @SerializedName("dataPost")
-    @Expose
-    private List<Data> dataPost = null;
-
-    public List<Data> getDataPost() {
-        return dataPost;
-    }
-
-    public void setDataPost(List<Data> dataPost) {
-        this.dataPost = dataPost;
-    }
 
     public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
 
     public List<Datum1> getData() {
         return data;
     }
 
-    public void setData(List<Datum1> data) {
-        this.data = data;
-    }
 
 }

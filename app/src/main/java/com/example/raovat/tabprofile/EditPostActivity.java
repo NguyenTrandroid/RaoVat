@@ -5,13 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,8 +20,8 @@ import com.example.raovat.Models.Categorychild1;
 import com.example.raovat.Models.Categoryparen;
 import com.example.raovat.Models.InfoCategoryparen;
 import com.example.raovat.Models.Post;
-import com.example.raovat.Models.PostNew;
 import com.example.raovat.R;
+
 import com.example.raovat.Utils.SLoading;
 import com.example.raovat.addphoto.FragmentGalleryPhotoList;
 import com.example.raovat.addphoto.OnPhotoListSelect;
@@ -31,6 +31,7 @@ import com.example.raovat.image_picker_module.furntion.ImageFileLoader;
 import com.example.raovat.image_picker_module.furntion.ImageLoaderListener;
 import com.example.raovat.image_picker_module.model.Folder;
 import com.example.raovat.image_picker_module.model.Image;
+import com.example.raovat.sell.OnDelImg;
 import com.example.raovat.sell.OnSendData;
 import com.example.raovat.sell.SendIdPost;
 import com.example.raovat.sell.adapter.ImageSellAdapter;
@@ -41,11 +42,14 @@ import com.example.raovat.sell.fragment.FragmentB5;
 import com.example.raovat.sell.fragment.FragmentB6;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +58,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.loader.content.CursorLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -68,14 +71,16 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 
-public class EditPostActivity extends AppCompatActivity implements OnPhotoListSelect, OnSendData, SendIdPost, SendIDCategoryparent {
+public class EditPostActivity extends AppCompatActivity implements OnPhotoListSelect, OnSendData, SendIdPost, SendIDCategoryparent, SendPositionRemove, OnDelImg {
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     ImageFileLoader imageFileLoader;
     ArrayList<File> excludedImages;
     ImageSellAdapter imageSellAdapter;
     ArrayList<String> listImg;
-
+    ArrayList<String> listPortUrl;
+    ArrayList<String> listImgNew;
+    List<MultipartBody.Part> partLists;
     FragmentB6 fragmentB6;
     FragmentB4 fragmentB4;
     Fragment fragmentB5;
@@ -88,12 +93,13 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
 
     SLoading sLoading;
     final APIService service = APIClient.getClient();
-
+    private Boolean checkDelImg = false;
 
     String CategoryChildId = "";
     String AreaId = "";
     SendIdPost sendIdPost;
     SendIDCategoryparent sendIDCategoryparent;
+    int sizeUrl;
 
     ArrayList<InfoCategoryparen> categoryParentName;
     FragmentGalleryPhotoList fragmentGalleryPhotoList;
@@ -159,6 +165,10 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
     TextView tvText;
     @BindView(R.id.tv_title5)
     TextView tvTitle5;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+    @BindView(R.id.rl_load)
+    RelativeLayout rlLoad;
 
 
     @Override
@@ -306,14 +316,16 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
 
     private void updatePost() {
         JsonObject jsonObject = new JsonObject();
+
         jsonObject.addProperty("PostName", tvTitle.getText().toString());
-        jsonObject.addProperty("Price", tvPrice.getText().toString());
+        jsonObject.addProperty("Price", tvPrice.getText().toString().replace(".", "").trim());
         jsonObject.addProperty("Address", tvAddress.getText().toString());
         jsonObject.addProperty("PhoneNumber", tvSdt.getText().toString());
         jsonObject.addProperty("Description", tvDescription.getText().toString());
         jsonObject.addProperty("UserId", post.getUserId());
         jsonObject.addProperty("AreaId", AreaId);
-        jsonObject.addProperty("PostUrl", "");
+//         jsonObject.add("PostUrl", listImg);
+//        jsonObject.add("FileId", listFileId);
         jsonObject.addProperty("CategoryChildId", CategoryChildId);
         jsonObject.addProperty("Status", post.getStatus());
         sLoading.show();
@@ -357,6 +369,9 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
 
         sLoading = new SLoading(this);
         listImg = new ArrayList<>();
+        listPortUrl = new ArrayList<>();
+        listImgNew = new ArrayList<>();
+        partLists = new ArrayList<>();
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvImgSell.setLayoutManager(layoutManager);
@@ -369,11 +384,17 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
             tvTitle.setText(post.getPostName());
             tvAddress.setText(post.getAddress());
             tvSdt.setText(post.getPhoneNumber());
-            tvPrice.setText(post.getPrice());
+            NumberFormat formatter = new DecimalFormat("#,###");
+            double myNumber = Double.parseDouble(post.getPrice());
+            String formattedNumber = formatter.format(myNumber);
+            tvPrice.setText(formattedNumber);
             tvDescription.setText(post.getDescription());
+            sizeUrl = post.getPostUrl().size();
             for (int i = 0; i < post.getPostUrl().size(); i++) {
                 if (!post.getPostUrl().get(i).toString().trim().equals("")) {
+                    listPortUrl.add(post.getPostUrl().get(i));
                     listImg.add(post.getPostUrl().get(i));
+                    Log.d("AAA", post.getPostUrl().get(i) + " urlImg");
                 }
             }
 
@@ -418,6 +439,7 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
     public void sendPhotolist(ArrayList<String> list, boolean closeFragment) {
         fragmentManager.popBackStack();
         listImg.addAll(list);
+        listImgNew.addAll(list);
         imageSellAdapter.notifyDataSetChanged();
 
 
@@ -482,9 +504,9 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
     public void sendIDPost(String id) {
 
         sLoading.show();
-        Log.d("AAA", listImg.size() + "");
-        for (int i = 0; i < listImg.size(); i++) {
-            File file = new File(listImg.get(i));
+        for (int i = 0; i < listImgNew.size(); i++) {
+            File file = new File(listImgNew.get(i));
+            Log.d("AAA", listImgNew.get(i));
             String file_path = file.getAbsolutePath();
             String[] arrFile = file_path.split("\\.");
             file_path = arrFile[0] + System.currentTimeMillis() + "." + arrFile[1];
@@ -492,42 +514,43 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
                     RequestBody.create(MediaType.parse("multipart/form-data"), file);
             MultipartBody.Part body =
                     MultipartBody.Part.createFormData("image", file_path, requestFile);
+            partLists.add(body);
 
-            service.uploadImage(id, body)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<JsonObject>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(JsonObject object) {
-                            Log.d("AAA", object.toString() + "");
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.d("AAA", e + "erro");
-
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
         }
+        service.uploadImage(id, partLists)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JsonObject>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-        Toast.makeText(this, "Thành công!", Toast.LENGTH_SHORT).show();
-        finish();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject object) {
+                        Log.d("AAA", object.toString() + "");
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("AAA", e + "erro");
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Toast.makeText(EditPostActivity.this, "Thành công!", Toast.LENGTH_SHORT).show();
+                        finish();
+
+                    }
+                });
+
 
     }
 
     private void getNameCategoryparent(String id) {
-        sLoading.show();
+        progressBar.setVisibility(View.VISIBLE);
         final APIService service = APIClient.getClient();
         service.getIdCategoryParents(id)
                 .subscribeOn(Schedulers.io())
@@ -547,6 +570,7 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
 
                     @Override
                     public void onError(Throwable e) {
+                        progressBar.setVisibility(View.GONE);
 
                     }
 
@@ -583,14 +607,15 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
                     @Override
                     public void onError(Throwable e) {
 
-                        sLoading.dismiss();
+                        progressBar.setVisibility(View.GONE);
 
                     }
 
                     @Override
                     public void onComplete() {
                         tvCategoryparent.setText(nameCategoryparent);
-                        sLoading.dismiss();
+                        progressBar.setVisibility(View.GONE);
+                        rlLoad.setVisibility(View.VISIBLE);
 
 
                     }
@@ -617,6 +642,19 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
         }
         cursor.close();
         return path;
+    }
+
+    @Override
+    public void sendPosition(int position) {
+        Log.d("AAA", position + "");
+    }
+
+    @Override
+    public void checkDel(boolean checkDel) {
+        Log.d("DellImg", checkDel + "");
+        checkDelImg = true;
+
+
     }
 }
 

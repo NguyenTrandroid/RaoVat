@@ -16,15 +16,9 @@ public class PostNew {
         return status;
     }
 
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
 
     public Data1 getData() {
         return data;
     }
 
-    public void setData(Data1 data) {
-        this.data = data;
-    }
 }

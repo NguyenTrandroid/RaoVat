@@ -64,7 +64,7 @@
         <ImageView
             android:layout_gravity="center_vertical"
             android:src="@color/whitee"
-            android:layout_width="@dimen/dp1"
+            android:layout_width="@dimen/dp2"
             android:layout_height="@dimen/dp30" />
         <Button
             android:id="@+id/btn_next"

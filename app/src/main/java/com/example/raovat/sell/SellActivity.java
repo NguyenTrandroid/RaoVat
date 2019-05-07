@@ -1,8 +1,13 @@
 package com.example.raovat.sell;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,6 +33,7 @@ import com.example.raovat.sell.fragment.FragmentB3;
 import com.example.raovat.sell.fragment.FragmentB4;
 import com.example.raovat.sell.fragment.FragmentB5;
 import com.example.raovat.sell.fragment.FragmentB6;
+import com.example.raovat.tabprofile.SendPositionRemove;
 import com.google.gson.JsonObject;
 
 import java.io.File;
@@ -35,6 +41,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -50,9 +57,10 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.http.Multipart;
 
 
-public class SellActivity extends AppCompatActivity implements OnPhotoListSelect, OnSendData, SendIdPost {
+public class SellActivity extends AppCompatActivity implements OnPhotoListSelect, OnSendData, SendIdPost, SendPositionRemove,OnDelImg {
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
     ImageFileLoader imageFileLoader;
@@ -62,7 +70,10 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     FragmentB5 fragmentB5;
     FragmentB4 fragmentB4;
     String address = "";
+    List<MultipartBody.Part> multiparts;
     SLoading sLoading;
+    ImageSellAdapter imageSellAdapter;
+    Uri uri;
     final APIService service = APIClient.getClient();
 
 
@@ -132,6 +143,8 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     TextView tvText;
     @BindView(R.id.tv_title5)
     TextView tvTitle5;
+    @BindView(R.id.iv_camera)
+    ImageView ivCamera;
 
 
     @Override
@@ -151,6 +164,20 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
 
 
     private void initAction() {
+        ivCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.TITLE, "New Picture");
+                values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+                uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                Log.d("AAA", uri.getPath());
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, 123);
+            }
+        });
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,10 +198,20 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
         rlOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (tvCategoryparent.getText().toString().equals("") ||
+                        tvCategoryChilds.getText().toString().equals("") ||
+                        tvTitle.getText().toString().equals("") ||
+                        tvPrice.getText().toString().equals("") ||
+                        tvAddress.getText().toString().equals("") ||
+                        tvSdt.getText().toString().equals("")
+                ) {
+                    Toast.makeText(SellActivity.this, "Thông tin trống!", Toast.LENGTH_SHORT).show();
+                } else {
 
-                createPost(tvTitle.getText().toString(), tvPrice.getText().toString(), tvAddress.getText().toString(), tvSdt.getText().toString(),
-                        tvDescription.getText().toString(), sharedPreferences.getString("IdUser", ""),
-                        AreaId, CategoryChildId);
+                    createPost(tvTitle.getText().toString(), tvPrice.getText().toString().replace(".","").trim(), tvAddress.getText().toString(), tvSdt.getText().toString(),
+                            tvDescription.getText().toString(), sharedPreferences.getString("IdUser", ""),
+                            AreaId, CategoryChildId);
+                }
 
 
             }
@@ -313,11 +350,13 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
         bundle = new Bundle();
         sendIdPost = (SendIdPost) this;
         listImg = new ArrayList<>();
+        multiparts = new ArrayList<>();
         categoryParentName = new ArrayList<>();
         excludedImages = new ArrayList<>();
         fragmentB6 = new FragmentB6();
         fragmentB4 = new FragmentB4();
         fragmentB5 = new FragmentB5();
+        imageSellAdapter = new ImageSellAdapter(listImg, this);
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvImgSell.setLayoutManager(layoutManager);
@@ -346,8 +385,10 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     public void sendPhotolist(ArrayList<String> list, boolean closeFragment) {
         fragmentManager.popBackStack();
         listImg.addAll(list);
-        ImageSellAdapter imageSellAdapter = new ImageSellAdapter(listImg, this);
+//        imageSellAdapter = new ImageSellAdapter(listImg, this);
+        imageSellAdapter.notifyDataSetChanged();
         rvImgSell.setAdapter(imageSellAdapter);
+
 
         File file = new File(list.get(0));
         String file_path = file.getAbsolutePath();
@@ -423,7 +464,7 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     @Override
     public void sendIDPost(String id) {
 
-        sLoading.show();
+
         for (int i = 0; i < listImg.size(); i++) {
             File file = new File(listImg.get(i));
             String file_path = file.getAbsolutePath();
@@ -433,37 +474,72 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
                     RequestBody.create(MediaType.parse("multipart/form-data"), file);
             MultipartBody.Part body =
                     MultipartBody.Part.createFormData("image", file_path, requestFile);
+            multiparts.add(body);
 
-            service.uploadImage(id, body)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<JsonObject>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(JsonObject object) {
-                            Log.d("AAA", object.toString() + "");
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.d("AAA", e + "");
-
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
         }
+        service.uploadImage(id, multiparts)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JsonObject>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-        Toast.makeText(this, "Thành công!", Toast.LENGTH_SHORT).show();
-        finish();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject object) {
+                        Log.d("AAA", object.toString() + "");
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("AAA", e + "");
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Toast.makeText(SellActivity.this, "Thành công!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 123 && resultCode == this.RESULT_OK) {
+            listImg.add(getRealPathFromURI(uri));
+            imageSellAdapter.notifyDataSetChanged();
+            rvImgSell.setAdapter(imageSellAdapter);
+
+
+        }
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String path = null;
+        String[] proj = {MediaStore.MediaColumns.DATA};
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        if (cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            path = cursor.getString(column_index);
+        }
+        cursor.close();
+        return path;
+    }
+
+    @Override
+    public void sendPosition(int position) {
+
+    }
+
+    @Override
+    public void checkDel(boolean checkDel) {
 
     }
 }

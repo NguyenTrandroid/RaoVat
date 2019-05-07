@@ -64,7 +64,7 @@ public interface APIService {
 
     @Multipart
     @POST("image/upload/{id}")
-    Observable<JsonObject> uploadImage(@Path("id") String id, @Part MultipartBody.Part image);
+    Observable<JsonObject> uploadImage(@Path("id") String id, @Part List<MultipartBody.Part> images);
 
     @DELETE("post/api/delete/{id}")
     Observable<JsonObject> delPostUser(@Path("id") String id);

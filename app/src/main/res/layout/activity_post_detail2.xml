@@ -44,6 +44,7 @@
             android:orientation="vertical">
 
             <RelativeLayout
+                android:layout_marginTop="@dimen/dp2"
                 android:background="@color/whitee"
                 android:id="@+id/rl_vp"
                 android:layout_width="match_parent"
@@ -101,7 +102,7 @@
                     android:layout_margin="@dimen/dp5"
                     android:text="4.490.000 đ"
                     android:textColor="@color/red"
-                    android:textSize="@dimen/sp15"
+                    android:textSize="@dimen/sp20"
                     android:textStyle="bold" />
 
                 <TextView
@@ -111,12 +112,12 @@
                     android:layout_below="@id/tv_price"
                     android:layout_margin="@dimen/dp5"
                     android:text="Thứ 5 20/3/2019"
-                    android:textSize="@dimen/sp12"
+                    android:textSize="@dimen/sp15"
                     android:textStyle="bold" />
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp1"
+                    android:layout_height="@dimen/dp2"
                     android:layout_below="@id/tv_date"
                     android:layout_marginLeft="@dimen/dp5"
                     android:layout_marginRight="@dimen/dp5"
@@ -139,7 +140,7 @@
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp1"
+                    android:layout_height="@dimen/dp2"
                     android:layout_below="@id/tv_Description"
                     android:layout_marginLeft="@dimen/dp5"
                     android:layout_marginRight="@dimen/dp5"
@@ -171,7 +172,7 @@
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/dp1"
+                    android:layout_height="@dimen/dp2"
                     android:layout_below="@id/tv_Address"
                     android:layout_marginLeft="@dimen/dp5"
                     android:layout_marginRight="@dimen/dp5"
@@ -199,9 +200,9 @@
                     android:text="Tin rao này đã được kiểm duyệt. Nếu gặp vấn đề, vui lòng báo cáo tin đăng hoặc liên hệ CSKH để được trợ giúp."
                     android:layout_below="@id/iv_shield"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/dp35" />
+                    android:layout_height="@dimen/dp40" />
                 <Button
-                    android:layout_marginTop="@dimen/dp5"
+                    android:layout_marginTop="@dimen/dp10"
                     android:textSize="@dimen/sp12"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/tv"

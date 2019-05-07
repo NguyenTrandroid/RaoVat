@@ -43,9 +43,9 @@ public class FragmentGalleryPhotoList extends Fragment implements OnPhotoSelectt
     RecyclerView recyclerView;
     Bundle bundle;
 
-    ArrayList<File> excludedImages;
+
     OnPhotoListSelect onPhotoListSelect;
-    private ImageFileLoader imageFileLoader;
+
     TextView txtOk;
     RelativeLayout rlGallery;
 
@@ -130,7 +130,7 @@ public class FragmentGalleryPhotoList extends Fragment implements OnPhotoSelectt
                 listResource.add(0, folders.get(data.getIntExtra("position", 0)).getImages().get(i).getPath());
             }
         }
-//
+
 
     }
 
@@ -156,7 +156,7 @@ public class FragmentGalleryPhotoList extends Fragment implements OnPhotoSelectt
                     position = i;
                 }
             }
-            if (isSelected == true) {
+            if (isSelected) {
                 listPhotoSelected.remove(position);
                 if (listPhotoSelected.isEmpty()) {
                     txtOk.setVisibility(View.GONE);

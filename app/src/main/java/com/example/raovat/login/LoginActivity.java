@@ -5,10 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -16,15 +12,15 @@ import android.widget.RelativeLayout;
 import com.example.raovat.MainActivity;
 import com.example.raovat.Models.InfoUser;
 import com.example.raovat.R;
+
 import com.example.raovat.Utils.SLoading;
 import com.example.raovat.api.APIClient;
 import com.example.raovat.api.APIService;
+import com.example.raovat.customview.BTLogin;
 import com.google.gson.JsonObject;
-import com.wang.avi.AVLoadingIndicatorView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.cardview.widget.CardView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observer;
@@ -36,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
     public static boolean startSplashScreen = true;
     SharedPreferences sharedPreferences;
     String id;
-    String sdt;
     SLoading sLoading;
     @BindView(R.id.iv_logo)
     ImageView ivLogo;
@@ -47,18 +42,11 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.cb_tk)
     AppCompatCheckBox cbTk;
     @BindView(R.id.cv_login)
-    CardView cvLogin;
+    BTLogin cvLogin;
     @BindView(R.id.cv_signup)
-    CardView cvSignup;
+    BTLogin cvSignup;
     @BindView(R.id.rl_mainlg)
     RelativeLayout rlMainlg;
-    @BindView(R.id.iv_splash_screen)
-    ImageView ivSplashScreen;
-    @BindView(R.id.av_Loading)
-    AVLoadingIndicatorView avLoading;
-    @BindView(R.id.rl_splash_screen)
-    RelativeLayout rlSplashScreen;
-    CardView cardView;
 
 
     @Override
@@ -78,8 +66,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Login(edtUser.getText().toString(), edtPass.getText().toString());
+                test();
+
             }
         });
+
         cvSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,65 +81,25 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void init() {
-        sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
-        if (startSplashScreen) {
-            avLoading.show();
-            SetSplashScreen();
-            startSplashScreen = false;
-        } else {
-            if (!sharedPreferences.getString("IdUser", "").equals("")) {
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish();
-            } else {
-                avLoading.setVisibility(View.GONE);
-                rlSplashScreen.setVisibility(View.GONE);
-                rlMainlg.setVisibility(View.VISIBLE);
-            }
-
-        }
-
         sLoading = new SLoading(this);
+        sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
+
+        if (!sharedPreferences.getString("IdUser", "").equals("")) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+
+
+            finish();
+        } else {
+            rlMainlg.setVisibility(View.VISIBLE);
+        }
         Intent intent = getIntent();
         edtUser.setText(intent.getStringExtra("Phone"));
-
     }
 
-
-    private void SetSplashScreen() {
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
-        alphaAnimation.setDuration(3369);
-        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                ivSplashScreen.setVisibility(View.VISIBLE);
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 0, -getWindow().getDecorView().getHeight());
-                translateAnimation.setDuration(100);
-                translateAnimation.setFillAfter(true);
-                rlSplashScreen.startAnimation(translateAnimation);
-                if (sharedPreferences.getString("IdUser", "").equals("")) {
-                    rlSplashScreen.setVisibility(View.GONE);
-                    rlMainlg.setVisibility(View.VISIBLE);
-                } else {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
-                }
-
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        ivSplashScreen.startAnimation(alphaAnimation);
+    private void test() {
+        Log.d("AAA", id + "asdasdada");
     }
-
 
     private void Login(String phone, String pass) {
         sLoading.show();
@@ -188,6 +139,7 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString("Sdt", edtUser.getText().toString());
                         editor.commit();
                         startActivity(intent1);
+                        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                         finish();
                     }
                 });

@@ -1,17 +1,16 @@
 package com.example.raovat.sell.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.raovat.Models.Categoryparen2;
 import com.example.raovat.R;
+
 import com.example.raovat.Utils.SLoading;
 import com.example.raovat.api.APIClient;
 import com.example.raovat.api.APIService;

@@ -1,69 +1,66 @@
 package com.example.raovat;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.example.raovat.Models.InfoUser;
-import com.example.raovat.api.APIClient;
-import com.example.raovat.api.APIService;
-import com.example.raovat.history.FragmentHistory;
-import com.example.raovat.listpost.PostActivity;
+import com.example.raovat.Utils.CheckPermission;
+import com.example.raovat.Utils.Permissionruntime;
+import com.example.raovat.customview.RLCategory;
 import com.example.raovat.login.LoginActivity;
+import com.example.raovat.posts.PostActivity;
 import com.example.raovat.search.SearchActivity;
 import com.example.raovat.tabprofile.FragmentProfile;
-import com.google.gson.JsonObject;
 
-import java.util.List;
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     SharedPreferences sharedPreferences;
-    boolean b3 = false;
-
+    FragmentProfile fragmentProfile;
+    Dialog dialogLogout;
+    Permissionruntime permissionruntime;
+    CheckPermission checkPermission;
     boolean ck1 = true;
-    boolean ck2 = true;
-    boolean remember;
-
-
+    @BindView(R.id.iv_search)
+    ImageView ivSearch;
     @BindView(R.id.rl_sv)
     RelativeLayout rlSv;
-    RelativeLayout rlMain;
-    @BindView(R.id.rl_user)
-    RelativeLayout rlUser;
-    @BindView(R.id.rl_history)
-    RelativeLayout rlHistory;
-    @BindView(R.id.rl_logout)
-    RelativeLayout rlLogout;
-    @BindView(R.id.rl_dodientu)
-    RelativeLayout rlDodientu;
-    @BindView(R.id.rl_thucung)
-    RelativeLayout rlThucung;
-
-    @BindView(R.id.ln_add)
-    LinearLayout lnAdd;
     @BindView(R.id.iv_profile)
     ImageView ivProfile;
-    @BindView(R.id.iv_history)
-    ImageView ivHistory;
+    @BindView(R.id.rl_user)
+    RelativeLayout rlUser;
     @BindView(R.id.iv_logout)
     ImageView ivLogout;
+    @BindView(R.id.rl_logout)
+    RelativeLayout rlLogout;
+    @BindView(R.id.rl_main)
+    RelativeLayout rlMain;
+    @BindView(R.id.rl_dodientu)
+    RLCategory rlDodientu;
+    @BindView(R.id.rl_thucung)
+    RLCategory rlThucung;
+    @BindView(R.id.ln_add)
+    LinearLayout lnAdd;
+    @BindView(R.id.rl_xe)
+    RLCategory rlXe;
 
 
     @Override
@@ -79,14 +76,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void init() {
-        fragmentManager = getSupportFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
+        permissionruntime = new Permissionruntime(this);
+        checkPermission = new CheckPermission(this);
         sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
+        fragmentProfile = new FragmentProfile();
+
+
     }
+
 
     @Override
     public void onBackPressed() {
-        ivHistory.setImageResource(R.drawable.ic_historyoff);
         ivProfile.setImageResource(R.drawable.ic_useroff);
         super.onBackPressed();
     }
@@ -96,65 +96,64 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             }
         });
         rlUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!ck2) {
-                    fragmentManager.popBackStack();
-                    ck2 = true;
-                }
-                ivHistory.setImageResource(R.drawable.ic_historyoff);
-                if (ck1) {
-                    ivProfile.setImageResource(R.drawable.ic_useron);
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.ln_add, new FragmentProfile()).addToBackStack("profile");
-                    fragmentTransaction.commit();
-                    ck1 = false;
+                if (checkPermission.checkReadExternalPermission() && checkPermission.checkWriteExternalPermission() && checkPermission.checkCameraPermission()) {
+                    if (ck1) {
+                        ivProfile.setImageResource(R.drawable.ic_useron);
+                        fragmentManager = getSupportFragmentManager();
+                        fragmentTransaction = fragmentManager.beginTransaction();
+                        fragmentTransaction.replace(R.id.ln_add, new FragmentProfile(), "profile").addToBackStack("profile");
+                        fragmentTransaction.commit();
+                        Log.d("AAA", "tao moi");
+                        ck1 = false;
+                    } else {
+                        Log.d("AAA", "huy");
+                        ivProfile.setImageResource(R.drawable.ic_useroff);
+                        fragmentManager = getSupportFragmentManager();
+                        fragmentManager.popBackStack();
+                        ck1 = true;
+                    }
                 } else {
-                    ivProfile.setImageResource(R.drawable.ic_useroff);
-                    fragmentManager.popBackStack();
-                    ck1 = true;
+                    permissionruntime.requestPermissionCameraStrorge(null);
                 }
 
 
             }
         });
-        rlHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!ck1) {
-                    fragmentManager.popBackStack();
-                    ck1 = true;
-                }
-                ivProfile.setImageResource(R.drawable.ic_useroff);
 
-                if (ck2) {
-                    ivHistory.setImageResource(R.drawable.ic_historyon);
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.ln_add, new FragmentHistory()).addToBackStack("history");
-                    fragmentTransaction.commit();
-                    ck2 = false;
-                } else {
-                    fragmentManager.popBackStack();
-                    ivHistory.setImageResource(R.drawable.ic_historyoff);
-                    ck2 = true;
-
-                }
-
-
-            }
-        });
         rlLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.remove("IdUser");
-                editor.remove("Sdt");
-                editor.commit();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
+                dialogLogout = new Dialog(Objects.requireNonNull(MainActivity.this));
+                dialogLogout.setContentView(R.layout.dialog_logout);
+                Objects.requireNonNull(dialogLogout.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                Button btAdd = dialogLogout.findViewById(R.id.bt_logout);
+                Button btCancel = dialogLogout.findViewById(R.id.bt_cancel);
+                dialogLogout.show();
+                btAdd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.remove("IdUser");
+                        editor.remove("Sdt");
+                        editor.commit();
+                        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                        finish();
+                    }
+                });
+                btCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogLogout.cancel();
+                    }
+                });
+
+
             }
         });
         rlDodientu.setOnClickListener(new View.OnClickListener() {
@@ -163,11 +162,25 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, PostActivity.class);
                 intent.putExtra("IdCategoryparent", "5c7348cf2583740004db7348");
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
+            }
+        });
+        rlXe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, PostActivity.class);
+                intent.putExtra("IdCategoryparent", "5c7348b52583740004db7347");
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
 
             }
         });
 
+
     }
 
 }
+
+
+

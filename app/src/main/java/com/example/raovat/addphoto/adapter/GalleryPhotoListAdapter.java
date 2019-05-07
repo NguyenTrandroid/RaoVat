@@ -83,7 +83,7 @@ public class GalleryPhotoListAdapter extends RecyclerView.Adapter<GalleryPhotoLi
                             Glide.with(context).clear(holder.check);
                         }
                     } else countImageSelected--;
-                    if (onPhotoSelect != null && isMaxImage == false) {
+                    if (onPhotoSelect != null && !isMaxImage) {
                         onPhotoSelect.sendPhotoo(listPathSelected.get(position).getPath(),true);
                     }
 
@@ -107,7 +107,7 @@ public class GalleryPhotoListAdapter extends RecyclerView.Adapter<GalleryPhotoLi
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView photo;
         private ImageView check;
-        private ImageView camera;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
