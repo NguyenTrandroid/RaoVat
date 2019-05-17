@@ -33,6 +33,7 @@ import com.example.raovat.image_picker_module.model.Folder;
 import com.example.raovat.image_picker_module.model.Image;
 import com.example.raovat.sell.OnDelImg;
 import com.example.raovat.sell.OnSendData;
+import com.example.raovat.sell.SellActivity;
 import com.example.raovat.sell.SendIdPost;
 import com.example.raovat.sell.adapter.ImageSellAdapter;
 import com.example.raovat.sell.fragment.FragmentB1;
@@ -41,16 +42,20 @@ import com.example.raovat.sell.fragment.FragmentB4;
 import com.example.raovat.sell.fragment.FragmentB5;
 import com.example.raovat.sell.fragment.FragmentB6;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
 
 import java.io.File;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -78,6 +83,8 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
     ArrayList<File> excludedImages;
     ImageSellAdapter imageSellAdapter;
     ArrayList<String> listImg;
+    ArrayList<String> listFileId;
+
     ArrayList<String> listPortUrl;
     ArrayList<String> listImgNew;
     List<MultipartBody.Part> partLists;
@@ -316,7 +323,21 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
 
     private void updatePost() {
         JsonObject jsonObject = new JsonObject();
+        if (checkDelImg) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            JsonArray listPostUrl = new JsonArray();
 
+            for (int i = 0; i < listImg.size(); i++) {
+                listPostUrl.add(listImg.get(i));
+            }
+            JsonArray listFileId = new JsonArray();
+            for (int i = 0; i < listFileId.size(); i++) {
+                listPostUrl.add(listFileId.get(i));
+            }
+            jsonObject.add("PostUrl", listPostUrl);
+            jsonObject.add("FileId", listFileId);
+
+        }
         jsonObject.addProperty("PostName", tvTitle.getText().toString());
         jsonObject.addProperty("Price", tvPrice.getText().toString().replace(".", "").trim());
         jsonObject.addProperty("Address", tvAddress.getText().toString());
@@ -356,8 +377,6 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
                     public void onComplete() {
                         Log.d("AAA", "ok");
                         sendIdPost.sendIDPost(post.getId());
-                        sLoading.dismiss();
-                        Toast.makeText(EditPostActivity.this, "Thành công!", Toast.LENGTH_SHORT).show();
 
 
                     }
@@ -368,9 +387,10 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
     private void init() {
 
         sLoading = new SLoading(this);
-        listImg = new ArrayList<>();
+        listImg = new ArrayList<String>();
         listPortUrl = new ArrayList<>();
         listImgNew = new ArrayList<>();
+        listFileId = new ArrayList<>();
         partLists = new ArrayList<>();
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -394,8 +414,14 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
                 if (!post.getPostUrl().get(i).toString().trim().equals("")) {
                     listPortUrl.add(post.getPostUrl().get(i));
                     listImg.add(post.getPostUrl().get(i));
+
                     Log.d("AAA", post.getPostUrl().get(i) + " urlImg");
                 }
+            }
+            for (int i = 0; i < post.getFileId().size(); i++) {
+
+                listFileId.add(post.getFileId().get(i));
+
             }
 
             imageSellAdapter = new ImageSellAdapter(listImg, this);
@@ -502,49 +528,55 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
 
     @Override
     public void sendIDPost(String id) {
+        if (listImgNew.size() != 0) {
+            for (int i = 0; i < listImgNew.size(); i++) {
+                File file = new File(listImgNew.get(i));
+                Log.d("AAA", listImgNew.get(i));
+                String file_path = file.getAbsolutePath();
+                String[] arrFile = file_path.split("\\.");
+                file_path = arrFile[0] + System.currentTimeMillis() + "." + arrFile[1];
+                Log.d("file_path", file_path + "");
+                RequestBody requestFile =
+                        RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                MultipartBody.Part body =
+                        MultipartBody.Part.createFormData("image", file_path, requestFile);
+                partLists.add(body);
 
-        sLoading.show();
-        for (int i = 0; i < listImgNew.size(); i++) {
-            File file = new File(listImgNew.get(i));
-            Log.d("AAA", listImgNew.get(i));
-            String file_path = file.getAbsolutePath();
-            String[] arrFile = file_path.split("\\.");
-            file_path = arrFile[0] + System.currentTimeMillis() + "." + arrFile[1];
-            RequestBody requestFile =
-                    RequestBody.create(MediaType.parse("multipart/form-data"), file);
-            MultipartBody.Part body =
-                    MultipartBody.Part.createFormData("image", file_path, requestFile);
-            partLists.add(body);
+            }
 
+            service.uploadImage(id, partLists)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<JsonObject>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(JsonObject object) {
+                            Log.d("AAA", object.toString() + "");
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.d("AAA", e + "erro");
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            Toast.makeText(EditPostActivity.this, "Thành công!", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        }
+                    });
+
+        }else {
+            Toast.makeText(EditPostActivity.this, "Thành công!", Toast.LENGTH_SHORT).show();
+            finish();
         }
-        service.uploadImage(id, partLists)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JsonObject>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(JsonObject object) {
-                        Log.d("AAA", object.toString() + "");
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.d("AAA", e + "erro");
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Toast.makeText(EditPostActivity.this, "Thành công!", Toast.LENGTH_SHORT).show();
-                        finish();
-
-                    }
-                });
 
 
     }
@@ -650,9 +682,11 @@ public class EditPostActivity extends AppCompatActivity implements OnPhotoListSe
     }
 
     @Override
-    public void checkDel(boolean checkDel) {
-        Log.d("DellImg", checkDel + "");
+    public void checkDel(boolean checkDel, int post) {
         checkDelImg = true;
+        if (post < listFileId.size()) {
+            listFileId.remove(post);
+        }
 
 
     }

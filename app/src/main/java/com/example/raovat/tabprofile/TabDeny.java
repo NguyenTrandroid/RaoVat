@@ -95,7 +95,9 @@ public class TabDeny extends Fragment {
         sLoading = new SLoading(getContext());
         listPostDeny = new ArrayList<>();
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+
         sharedPreferences = getContext().getSharedPreferences("Login", Context.MODE_PRIVATE);
+
         Log.d("AAA", sharedPreferences.getString("IdUser", ""));
 
     }

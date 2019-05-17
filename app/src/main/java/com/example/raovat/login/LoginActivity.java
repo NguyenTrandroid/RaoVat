@@ -21,6 +21,7 @@ import com.google.gson.JsonObject;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatCheckBox;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observer;
@@ -113,22 +114,17 @@ public class LoginActivity extends AppCompatActivity {
                 .subscribe(new Observer<InfoUser>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
-
                     }
 
                     @Override
                     public void onNext(InfoUser infoUser) {
                         id = infoUser.getData().getId();
-
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.d("AAA", e + "");
                         sLoading.dismiss();
-
                     }
 
                     @Override

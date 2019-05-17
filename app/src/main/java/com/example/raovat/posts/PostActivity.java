@@ -36,6 +36,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observer;
@@ -124,7 +125,6 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                 getListSearch(idAddress, listIDCategoryParents.get(position).getId(), "");
                 iDCategoryParents = listIDCategoryParents.get(position).getId();
 
-
             }
 
             @Override
@@ -198,14 +198,12 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
             rvPost.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
         }
-
         service.searchMulti(idAddress, idCategoryParents, idDetail)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<MultiSearch>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
 
                     @Override
@@ -216,19 +214,16 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                                 listPost.add(multiSearch.getData().get(i));
                             }
                         }
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         Log.d("AAA", e + "");
                         progressBar.setVisibility(View.GONE);
-
                     }
 
                     @Override
                     public void onComplete() {
-
                         if (listPost.size() != 0) {
                             rlNotFound.setVisibility(View.GONE);
                             final Calendar cal1 = Calendar.getInstance();
@@ -256,7 +251,7 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                                 progressBar.setVisibility(View.GONE);
                                 rvPost.setVisibility(View.VISIBLE);
                             }
-                        }else {
+                        } else {
                             progressBar.setVisibility(View.GONE);
                             rlNotFound.setVisibility(View.VISIBLE);
                             pullToRefresh.setRefreshing(false);
@@ -340,7 +335,7 @@ public class PostActivity extends AppCompatActivity implements OnClickDetail {
                     public void onComplete() {
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(PostActivity.this, android.R.layout.simple_spinner_item, listAddress);
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            spnAddress.setAdapter(adapter);
+                        spnAddress.setAdapter(adapter);
                         spnAddress.setSelection(2);
                         idAddress = listIdAddress.get(2).getId();
                         progressBar.setVisibility(View.GONE);

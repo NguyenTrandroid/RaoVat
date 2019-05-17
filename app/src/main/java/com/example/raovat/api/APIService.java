@@ -70,7 +70,7 @@ public interface APIService {
     Observable<JsonObject> delPostUser(@Path("id") String id);
 
     @PUT("post/api/update/{id}")
-    Observable<Post> updatePost(@Path("id") String id, @Body JsonObject object);
+        Observable<Post> updatePost(@Path("id") String id, @Body JsonObject object);
 
     @GET("search/api/{postname}")
     Observable<SearchKey> listSearch(@Path("postname") String key);

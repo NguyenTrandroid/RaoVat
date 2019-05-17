@@ -48,7 +48,7 @@ public class TabSell extends Fragment {
     ProgressBar progressBar;
     CardView cvSell;
     RecyclerView recyclerView;
-    ArrayList<Post> listPost;
+    ArrayList<Post> listPost; // cai lis nay là list đang bán, đéo phải list cha
     ArrayList<Post> listPostDeny;
     SLoading sLoading;
     SharedPreferences sharedPreferences;
@@ -69,7 +69,7 @@ public class TabSell extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("AAA", "oncreate");
+
 
     }
 
@@ -77,10 +77,11 @@ public class TabSell extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tabprofile, null);
-        Log.d("AAA", "onCreateView");
+
         cvSell = view.findViewById(R.id.cv_sell);
         recyclerView = view.findViewById(R.id.rv_PostUser);
         progressBar = view.findViewById(R.id.progressBar);
+
         init();
         initAction();
         return view;
@@ -89,10 +90,14 @@ public class TabSell extends Fragment {
     private void init() {
 
         sLoading = new SLoading(getContext());
+
         listPost = new ArrayList<>();
-        listPostDeny = new ArrayList<>();
+
+       // listPostDeny = new ArrayList<>();
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
+
         sharedPreferences = getContext().getSharedPreferences("Login", Context.MODE_PRIVATE);
+
         Log.d("AAA", sharedPreferences.getString("IdUser", ""));
 
     }
@@ -121,8 +126,10 @@ public class TabSell extends Fragment {
     }
 
     public void getListPostUser(String id) {
+
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+        // gọi api load data
 
         service.ListPostUser(id)
                 .subscribeOn(Schedulers.io())
@@ -137,11 +144,12 @@ public class TabSell extends Fragment {
                     public void onNext(List<Post> posts) {
 
                         for (int i = 0; i < posts.size(); i++) {
+                            // check xem bai đang đang bán hay đã bán
+                            // false: Đang bán, True: Đã bán
                             if (!posts.get(i).getStatus()) {
                                 listPost.add(posts.get(i));
                             }
                         }
-
 
                     }
 
@@ -154,22 +162,15 @@ public class TabSell extends Fragment {
 
                     @Override
                     public void onComplete() {
+                        // sap xep bai đăng theo thơi gian
                         final Calendar cal1 = Calendar.getInstance();
                         final Calendar cal2 = Calendar.getInstance();
-//                        Collections.sort(listPost, new Comparator<Post>() {
-//
-//                            @Override
-//                            public int compare(Post o1, Post o2) {
-//                                cal1.setTime(o1.getPostDate());
-//                                cal2.setTime(o2.getPostDate());
-//                                return (int) (cal2.getTimeInMillis() - cal1.getTimeInMillis());
-//                            }
-//                        });
                         Collections.sort(listPost, new Comparator<Post>() {
                             public int compare(Post o1, Post o2) {
                                 return o2.getPostDate().compareTo(o1.getPostDate());
                             }
                         });
+
                         sellAdapter = new SellAdapter(getContext(), listPost);
                         recyclerView.setAdapter(sellAdapter);
                         progressBar.setVisibility(View.GONE);
@@ -197,7 +198,9 @@ public class TabSell extends Fragment {
                 jsonObject.addProperty("UserId", post.getUserId());
                 jsonObject.addProperty("AreaId", post.getAreaId());
                 jsonObject.addProperty("CategoryChildId", post.getCategoryChildId());
+                // set lai trang thai bai đăng = true = Đã bán
                 jsonObject.addProperty("Status", true);
+
                 service.updatePost(listPost.get((item.getGroupId())).getId(), jsonObject)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -223,6 +226,7 @@ public class TabSell extends Fragment {
 
                             @Override
                             public void onComplete() {
+
                                 listPost.remove(item.getGroupId());
                                 sellAdapter.notifyDataSetChanged();
                                 sLoading.dismiss();
@@ -235,12 +239,16 @@ public class TabSell extends Fragment {
 
                 break;
             case 122:
+                // setup dialog
                 dialogDel = new Dialog(Objects.requireNonNull(getContext()));
                 dialogDel.setContentView(R.layout.dialog_delete);
                 Objects.requireNonNull(dialogDel.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 Button btAdd = dialogDel.findViewById(R.id.bt_logout);
                 Button btCancel = dialogDel.findViewById(R.id.bt_cancel);
                 dialogDel.show();
+
+
+
                 btAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

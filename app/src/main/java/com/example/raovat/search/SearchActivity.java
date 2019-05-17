@@ -80,10 +80,13 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(final String query) {
                 cvSearch.setVisibility(View.GONE);
+
                 if (list.size() == 0) {
+
                     Log.d("AAA", "null");
                     saveKey(query);
                     list.add(query);
+
                 } else {
                     for (int i = 0; i < list.size(); i++) {
                         if (query.equals(list.get(i))) {
@@ -107,7 +110,7 @@ public class SearchActivity extends AppCompatActivity {
                 listTemp.clear();
                 if (newText.length() == 0) {
                     cvSearch.setVisibility(View.GONE);
-                    listTemp.addAll(list);
+                    listTemp.addAll(list);//
                     Log.d("AAA", listTemp.size() + "");
                 } else {
                     cvSearch.setVisibility(View.VISIBLE);
@@ -122,6 +125,7 @@ public class SearchActivity extends AppCompatActivity {
                     }
                     Log.d("AAA", listTemp.size() + "");
                 }
+
                 ArrayAdapter<String> itemsAdapterTemp =
                         new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, listTemp);
                 lvSearch.setAdapter(itemsAdapterTemp);

@@ -22,11 +22,12 @@ import androidx.viewpager.widget.ViewPager;
 
 public class FragmentProfile extends Fragment {
     private ViewPager pager;
+
     private TabLayout tabLayout;
+
     TabSell tabSell;
     TabDeny tabDeny;
     private SharedPreferences sharedPreferences;
-
 
 
     @Override
@@ -45,7 +46,9 @@ public class FragmentProfile extends Fragment {
         tabLayout = view.findViewById(R.id.tl_profile);
         tabSell = new TabSell();
         tabDeny = new TabDeny();
+
         setupViewPager(pager, tabSell, tabDeny);
+
         tabLayout.setupWithViewPager(pager);
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -62,7 +65,7 @@ public class FragmentProfile extends Fragment {
                         if (tabSell.checkupdate) {
                             tabDeny.listPostDeny.clear();
                             tabDeny.getListPostUserDeny(sharedPreferences.getString("IdUser", ""));
-                            tabSell.checkupdate = false;
+                            tabSell.checkupdate = false; //noi sau
                         }
                         break;
                 }
@@ -85,15 +88,18 @@ public class FragmentProfile extends Fragment {
     }
 
     private void setupViewPager(ViewPager viewPager, TabSell tabSell, TabDeny tabDeny) {
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
 
         adapter.addFragment(tabSell, "Đang bán");
         adapter.addFragment(tabDeny, "Đã bán");
+
         viewPager.setAdapter(adapter);
 
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
+
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 

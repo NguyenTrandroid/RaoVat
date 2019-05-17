@@ -90,22 +90,16 @@ public class SignUpActivity extends AppCompatActivity {
                 .subscribe(new Observer<User1>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
 
                     @Override
                     public void onNext(User1 user1) {
 
-
-
                     }
-
                     @Override
                     public void onError(Throwable e) {
                         sLoading.dismiss();
                         Toast.makeText(SignUpActivity.this, "Tài khoản đã tồn tại!", Toast.LENGTH_SHORT).show();
-
-
                     }
 
                     @Override
@@ -113,7 +107,6 @@ public class SignUpActivity extends AppCompatActivity {
                         Toast.makeText(SignUpActivity.this, "Thành công!", Toast.LENGTH_SHORT).show();
                         startActivity(intent);
                         finish();
-
                     }
                 });
     }

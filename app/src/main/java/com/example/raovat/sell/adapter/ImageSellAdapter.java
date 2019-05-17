@@ -52,7 +52,7 @@ public class ImageSellAdapter extends RecyclerView.Adapter<ImageSellAdapter.View
             public void onClick(View view) {
                 listFrameAsset.remove(position);
                 sendPositionRemove.sendPosition(position);
-                onDelImg.checkDel(true);
+                onDelImg.checkDel(true,position);
 
                 notifyDataSetChanged();
             }

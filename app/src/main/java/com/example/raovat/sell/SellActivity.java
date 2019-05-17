@@ -539,7 +539,7 @@ public class SellActivity extends AppCompatActivity implements OnPhotoListSelect
     }
 
     @Override
-    public void checkDel(boolean checkDel) {
+    public void checkDel(boolean checkDel,int pos) {
 
     }
 }
